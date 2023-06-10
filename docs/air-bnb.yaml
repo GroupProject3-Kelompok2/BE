@@ -22,10 +22,10 @@ tags:
     description: Pengguna aplikasi yang dibangun
   - name: Homestay
     description: Product yang akan disewakan penyewa
-  - name: Booking
-    description: Proses peminjam yang menyewa homestay
+  - name: Reservation
+    description: Proses menyewa homestay
   - name: Payment
-    description: Payment untuk proses pembayaran setelah booking homestay oleh peminjam
+    description: Proses pembayaran setelah membuat pemesanan homestay oleh peminjam
   - name: Review
     description: Review untuk homestay yang telah disewa oleh peminjam
 
@@ -34,117 +34,81 @@ paths:
     post:
       tags:
         - Authentication
-      summary: Register user
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      responses:
-        default:
-          description: successful operation
+      summary: Register a new user
+      description: Endpoint create a new user to the web-application
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
-        description: Created user object
-        required: true
+              $ref: "#/components/schemas/users"
+            example:
+              username: "peterzalai"
+              email: "peterzalai@gmail.com"
+              password: "@Secret123"
+      responses:
+        '201':
+          $ref: '#/components/responses/Response201'
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
   
   /login:
-    get:
+    post:
       tags:
         - Authentication
-      summary: Logs user into the system
-      operationId: loginUser
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: true
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: true
-          schema:
-            type: string
+      summary: Login to system
+      description: Endpoint login user to the web-application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/users'
+            examples:
+              example1:
+                summary: Example login user id 1
+                value:
+                  email: "peterzalai@gmail.com"
+                  password: "@Secret123"
+              example2:
+                summary: Example login user id 2
+                value:
+                  email: "peterzalai@gmail.com"
+                  password: "@Secret123"
       responses:
         '200':
-          description: successful operation
-          headers:
-            X-Rate-Limit:
-              description: calls per hour allowed by the user
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
-          content:
-            application/json:
-              schema:
-                type: string
-            application/xml:
-              schema:
-                type: string
+          $ref: '#/components/responses/Response200Login'
         '400':
-          description: Invalid username/password supplied
+          $ref: '#/components/responses/Response400Login'
+        '500':
+          $ref: '#/components/responses/Response500'
 
-  /user/createWithArray:
-    post:
-      tags:
-        - User
-      summary: Creates list of users with given input array
-      operationId: createUsersWithArrayInput
-      responses:
-        default:
-          description: successful operation
-      requestBody:
-        $ref: '#/components/requestBodies/UserArray'
-  /user/createWithList:
-    post:
-      tags:
-        - User
-      summary: Creates list of users with given input array
-      operationId: createUsersWithListInput
-      responses:
-        default:
-          description: successful operation
-      requestBody:
-        $ref: '#/components/requestBodies/UserArray'
-  /user/logout:
+  '/users/{user_id}':
     get:
       tags:
         - User
-      summary: Logs out current logged in user session
-      operationId: logoutUser
-      responses:
-        default:
-          description: successful operation
-  '/user/{username}':
-    get:
-      tags:
-        - User
-      summary: Get user by user name
+      summary: Get user
       operationId: getUserByName
       parameters:
-        - name: username
+        - name: user_id
           in: path
-          description: The name that needs to be fetched. Use user1 for testing.
+          description: User ID
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/users'
             application/xml:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/users'
         '400':
           description: Invalid username supplied
         '404':
@@ -156,12 +120,13 @@ paths:
       description: This can only be done by the logged in user.
       operationId: updateUser
       parameters:
-        - name: username
+        - name: user_id
           in: path
-          description: name that need to be updated
+          description: User ID
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '400':
           description: Invalid user supplied
@@ -171,7 +136,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/users'
         description: Updated user object
         required: true
     delete:
@@ -181,38 +146,132 @@ paths:
       description: This can only be done by the logged in user.
       operationId: deleteUser
       parameters:
-        - name: username
+        - name: user_id
           in: path
-          description: The name that needs to be deleted
+          description: User ID
           required: true
           schema:
             type: string
+            format: uuid
       responses:
         '400':
           description: Invalid username supplied
         '404':
           description: User not found
+  '/users/{user_id}/reservation':
+    get:
+      tags:
+        - User
+      summary: Get user that booking homestay
+      parameters:
+        - name: user_id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/users'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+  '/users/{user_id}/homestay':
+    get:
+      tags:
+        - User
+      summary: Get user that hosting homestay
+      parameters:
+        - name: user_id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/users'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
 
-  /pet:
+  /homestays:
     post:
       tags:
         - Homestay
-      summary: Add a new pet to the store
+      summary: Register a new homestay
+      responses:
+        '405':
+          description: Invalid input
+    get:
+      tags:
+        - Homestay
+      summary: Get list homestays
       operationId: addPet
       responses:
         '405':
           description: Invalid input
-      security:
-        - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
-      requestBody:
-        $ref: '#/components/requestBodies/Pet'
+
+  '/homestays/{homestay_id}/review':
+    get:
+      tags:
+        - Homestay
+      summary: Find specific hemestay, homestay's reviews and rating accumulation
+      description: Find specific hemestay, homestay's reviews and rating accumulation
+      parameters:
+        - name: homestay_id
+          in: path
+          description: Homestay ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/homestays'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/homestays'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+
+  '/homestays/{homestay_id}':
     put:
       tags:
         - Homestay
-      summary: Update an existing pet
-      operationId: updatePet
+      summary: Update an existing homestay
+      parameters:
+        - name: homestay_id
+          in: path
+          description: Homestay ID
+          required: true
+          schema:
+            type: string
+            format: uuid      
       responses:
         '400':
           description: Invalid ID supplied
@@ -220,380 +279,672 @@ paths:
           description: Pet not found
         '405':
           description: Validation exception
-      security:
-        - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
-      requestBody:
-        $ref: '#/components/requestBodies/Pet'
-  
-  /pet/findByStatus:
-    get:
+
+    delete:
       tags:
         - Homestay
-      summary: Finds Pets by status
-      description: Multiple status values can be provided with comma separated strings
-      operationId: findPetsByStatus
+      summary: Unregister a homestay
       parameters:
-        - name: status
-          in: query
-          description: Status values that need to be considered for filter
-          required: true
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-              enum:
-                - available
-                - pending
-                - sold
-              default: available
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Review'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Review'
-        '400':
-          description: Invalid status value
-      security:
-        - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
-  /pet/findByTags:
-    get:
-      tags:
-        - Homestay
-      summary: Finds Pets by tags
-      description: >-
-        Muliple tags can be provided with comma separated strings. Use\ \ tag1,
-        tag2, tag3 for testing.
-      operationId: findPetsByTags
-      parameters:
-        - name: tags
-          in: query
-          description: Tags to filter by
-          required: true
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Review'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Review'
-        '400':
-          description: Invalid tag value
-      security:
-        - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
-      deprecated: true
-  '/pet/{petId}':
-    get:
-      tags:
-        - Homestay
-      summary: Find pet by ID
-      description: Returns a single pet
-      operationId: getPetById
-      parameters:
-        - name: petId
+        - name: homestay_id
           in: path
-          description: ID of pet to return
+          description: Homestay ID
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Review'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Review'
         '400':
           description: Invalid ID supplied
         '404':
           description: Pet not found
-      security:
-        - api_key: []
+
+  /reservations:
     post:
       tags:
-        - Homestay
-      summary: Updates a pet in the store with form data
-      operationId: updatePetWithForm
+        - Reservation
+      summary: User can make a reservation
+      description: Endpoint login user to the web-application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/reservations"
+            example:
+              homestay_id: "string-uuid"
+              check-in_date: "2023/06/05 08:05"
+              check-out_date: "2023/08/05 08:05"
+      responses:
+        '201':
+          $ref: '#/components/responses/Response201MakeReservation'
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+      security:
+        - bearerAuth: []
+
+  '/reservations/{reservation_id}/payment':
+    get:
+      tags:
+        - Reservation
+      summary: Find specific reservation
+      description: Returns a single pet
       parameters:
-        - name: petId
+        - name: reservation_id
           in: path
-          description: ID of pet that needs to be updated
+          description: Reservation ID
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Response200Reservation'
+        '400':
+          $ref: '#/components/responses/Response400'
+        '404':
+          $ref: '#/components/responses/Response404'
+        '500':
+          $ref: '#/components/responses/Response500'
+      security:
+        - bearerAuth: []
+
+  '/reservations/{reservation_id}':
+    put:
+      tags:
+        - Reservation
+      summary: Edit an existing reservation
+      description: Endpoint edit reservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/reservations"
+            example:
+              check-in_date: "2023/06/05 08:05"
+              check-out_date: "2023/08/05 08:05"
+      responses:
+        '201':
+          $ref: '#/components/responses/Response201'
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+      security:
+        - bearerAuth: []
+
+    delete:
+      tags:
+        - Reservation
+      summary: User can delete a reservation
+      operationId: deletePet
+      parameters:
+        - name: reservation_id
+          in: path
+          description: Reservation ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+
+  /payments:
+    post:
+      tags:
+        - Payment
+      summary: Submit Payment
+      description: Submit Payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/reservations"
+            example:
+              reservation_id: "string-uuid"
+      responses:
+        '201':
+          $ref: '#/components/responses/Response201SubmitPayment'
+        '400':
+          $ref: '#/components/responses/Response400'
+        '500':
+          $ref: '#/components/responses/Response500'
+      security:
+        - bearerAuth: []
+
+  '/payments/{payment_id}':
+    get:
+      tags:
+        - Payment
+      summary: Find specific payment
+      description: Returns a single pet
+      parameters:
+        - name: payment_id
+          in: path
+          description: Payment ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Response200GetPayment'
+        '400':
+          $ref: '#/components/responses/Response400'
+        '404':
+          $ref: '#/components/responses/Response404'
+        '500':
+          $ref: '#/components/responses/Response500'
+      security:
+        - bearerAuth: []
+
+    put:
+      tags:
+        - Payment
+      summary: Update an existing payment
+      parameters:
+        - name: payment_id
+          in: path
+          description: Payment ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '405':
+          description: Validation exception
+
+    delete:
+      tags:
+        - Payment
+      summary: Delete a payment
+      parameters:
+        - name: payment_id
+          in: path
+          description: Payment ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+
+  /reviews:
+    post:
+      tags:
+        - Review
+      summary: User can make a reservation
       responses:
         '405':
           description: Invalid input
-      security:
-        - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
-      requestBody:
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                name:
-                  description: Updated name of the pet
-                  type: string
-                status:
-                  description: Updated status of the pet
-                  type: string
-    delete:
+
+  '/reviews/{review_id}':
+    get:
       tags:
-        - Homestay
-      summary: Deletes a pet
-      operationId: deletePet
+        - Review
+      summary: Find specific reservation
+      description: Returns a single pet
       parameters:
-        - name: api_key
-          in: header
-          required: false
-          schema:
-            type: string
-        - name: petId
+        - name: review_id
           in: path
-          description: Pet id to delete
+          description: Review ID
           required: true
           schema:
             type: integer
-            format: int64
+            format: uint64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reviews'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/reviews'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+
+    put:
+      tags:
+        - Review
+      summary: Update an existing reservation
+      parameters:
+        - name: review_id
+          in: path
+          description: Review ID
+          required: true
+          schema:
+            type: integer
+            format: uint64
       responses:
         '400':
           description: Invalid ID supplied
         '404':
           description: Pet not found
-      security:
-        - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
-  '/pet/{petId}/uploadImage':
-    post:
-      tags:
-        - Homestay
-      summary: uploads an image
-      operationId: uploadFile
-      parameters:
-        - name: petId
-          in: path
-          description: ID of pet to update
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-      security:
-        - petstore_auth:
-            - 'write:pets'
-            - 'read:pets'
-      requestBody:
-        content:
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
-  /store/inventory:
-    get:
-      tags:
-        - Booking
-      summary: Returns pet inventories by status
-      description: Returns a map of status codes to quantities
-      operationId: getInventory
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties:
-                  type: integer
-                  format: int32
-      security:
-        - api_key: []
+        '405':
+          description: Validation exception
+
     delete:
       tags:
-        - Booking
-      summary: Delete purchase order by ID
-      description: >-
-        For valid response try integer IDs with positive integer value.\ \
-        Negative or non-integer values will generate API errors
-      operationId: deleteOrder
+        - Review
+      summary: User can delete a reservation
       parameters:
-        - name: orderId
+        - name: review_id
           in: path
-          description: ID of the order that needs to be deleted
+          description: Review ID
           required: true
           schema:
             type: integer
-            format: int64
-            minimum: 1
+            format: uint64
       responses:
         '400':
           description: Invalid ID supplied
         '404':
-          description: Order not found
+          description: Pet not found
 
-externalDocs:
-  description: Find out more about Swagger
-  url: 'http://swagger.io'
 components:
+  securitySchemes:
+    bearerAuth:           
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  
+  requestBodies:
+    RequestLoginUser:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: '#/components/schemas/users' 
+
+  responses:
+    Response200:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: "Successful operation"
+    
+    Response201:
+      description: Successful operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 201
+              message:
+                type: string
+                example: "Successful operation"
+
+    Response400:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Bad request"
+    
+    Response401:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 401
+              message:
+                type: string
+                example: "Unauthorized access."
+
+    Response404:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 404
+              message:
+                type: string
+                example: "The requested resource was not found"
+
+    Response500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 500
+              message:
+                type: string
+                example: "Internal server error"
+
+    Response200Login:
+      description: Successful login
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              token:
+                type: string
+            example: 
+              code: 200
+              message: "Successful login"
+              data:
+                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBldGVyemFsYWlAZ21haWwuY29tIiwicGFzc3dvcmQiOiJAU2VjcmV0MTIzIn0.BZq48TAx5wci2LH48KW5geslrGR2ybr0-5Wol-HyDkI"
+   
+    Response200Reservation:
+      description: Successful Operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              token:
+                type: string
+            example: 
+              code: 200
+              message: "Successful operation"
+              data:
+                  category: "Villa Premium A3"
+                  price: 100
+                  quantity: 2
+                  gross_amount: 200
+                  check-in_date: "2023/06/05 08:05"
+                  check-out_date: "2023/08/05 08:05"
+
+    Response200GetPayment:
+      description: Successful Operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              token:
+                type: string
+            example: 
+              code: 200
+              message: "Successful operation"
+              data:
+                reservation_id: "string-uuid"
+                category: "Villa Premium A3"
+                price: 100
+                quantity: 2
+                gross_amount: 200
+                check-in_date: "2023/06/05 08:05"
+                check-out_date: "2023/08/05 08:05"
+                payment_type: "bank_transfer"
+                payment_time: "2019-10-23 16:33:49"
+                payment_status: "pending"
+                bank_transfer: "bca"
+                va_number: "812785002530231"                  
+
+    Response201MakeReservation:
+      description: Successful Operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              token:
+                type: string
+            example: 
+              code: 200
+              message: "Successful operation"
+              data:
+                  reservation_id: "string-uuid"
+                  category: "Villa Premium A3"
+                  price: 100
+                  quantity: 2
+                  gross_amount: 200
+                  check-in_date: "2023/06/05 08:05"
+                  check-out_date: "2023/08/05 08:05"
+
+    Response201SubmitPayment:
+      description: Successful Operation
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+              message:
+                type: string
+              token:
+                type: string
+            example: 
+              code: 201
+              message: "Success, Bank Transfer transaction is created"
+              data:
+                payment_id: "string-midtrans"
+                va_number: "812785002530231"
+
+    Response400Login:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                example: 400
+              message:
+                type: string
+                example: "Bad request, Incorrect email or password"
+
   schemas:
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        petId:
-          type: integer
-          format: int64
-        quantity:
-          type: integer
-          format: int32
-        shipDate:
+    users:
+      type: object 
+      properties: 
+        user_id: 
+          type: string
+          format: uuid 
+        username: 
+          type: string  
+        email: 
+          type: string
+          format: email
+        password: 
+          type: string
+        user_picture: 
+          type: string
+        created_at:
           type: string
           format: date-time
-        status:
+        updated_at:
           type: string
-          description: Order Status
-          enum:
-            - placed
-            - approved
-            - delivered
-        complete:
+          format: date-time
+        is_deleted:
           type: boolean
-          default: false
-      xml:
-        name: Order
-    Homestay:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-      xml:
-        name: Category
-    Booking:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        username:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-        phone:
-          type: string
-        userStatus:
-          type: integer
-          format: int32
-          description: User Status
-      xml:
-        name: User
-    Payment:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        username:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-        phone:
-          type: string
-        userStatus:
-          type: integer
-          format: int32
-          description: User Status
-    Review:
+    homestays:
       type: object
       required:
-        - name
-        - photoUrls
+        - title
+        - homestay_picture_id
       properties:
-        id:
+        homestay_id:
+          type: string
+          format: uuid 
+        title:
+          type: string
+        description:
+          type: string
+        homestay_picture_id:
           type: integer
-          format: int64
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        is_deleted:
+          type: boolean
+    homestay_pictures:
+      type: object
+      required:
+        - homestay_picture
+      properties:
+        homestay_picture_id:
+          type: integer
+        homestay_picture_url:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        is_deleted:
+          type: boolean
+    reservations:
+      type: object
+      properties:
+        reservation_id:
+          type: string
+          format: uuid 
+        category:
+          type: string
+        price:
+          type: integer
+          format: uint64
+        quantity:
+          type: integer
+          format: uint64
+        check-in_date:
+          type: string
+          format: date-time
+        check-out_date:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        is_deleted:
+          type: boolean
+    payments:
+      type: object
+      required:
+        - booking_id
+        - gross_amount
+        - payment_type
+        - bank_transfer
+      properties:
+        transaction_id:
+          type: string
+          format: uuid
+        booking_id:
+          type: string
+        gross_amount:
+          type: string
+        payment_type:
+          type: string
+        bank_transfer:
+          type: string
+          enum:
+          - bca
+          - bni
+          - bri
+          - mandiri
+        payment_time:
+          type: string
+        payment_status:
+          type: string
+        VA_Numbers:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        is_deleted:
+          type: boolean
+    reviews:
+      type: object
+      required:
+        - username
+        - user_picture
+      properties:
+        review_id:
+          type: integer
+          format: uint64
         username:
           type: string
-        firstName:
+        user_picture:
           type: string
-        lastName:
+        review:
           type: string
-        email:
+        rating:
           type: string
-        password:
+        created_at:
           type: string
-        phone:
+          format: date-time
+        updated_at:
           type: string
-        userStatus:
-          type: integer
-          format: int32
-          description: User Status
-        status:
-          type: string
-          description: pet status in the store
-          enum:
-            - available
-            - pending
-            - sold
-      xml:
-        name: Pet
+          format: date-time
+        is_deleted:
+          type: boolean
     ApiResponse:
       type: object
       properties:
@@ -604,36 +955,3 @@ components:
           type: string
         message:
           type: string
-  requestBodies:
-    Pet:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Review'
-        application/xml:
-          schema:
-            $ref: '#/components/schemas/Review'
-      description: Pet object that needs to be added to the store
-      required: true
-    UserArray:
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              $ref: '#/components/schemas/User'
-      description: List of user object
-      required: true
-  securitySchemes:
-    petstore_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: 'http://petstore.swagger.io/oauth/dialog'
-          scopes:
-            'write:pets': modify pets in your account
-            'read:pets': read your pets
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
