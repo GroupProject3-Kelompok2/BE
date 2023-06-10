@@ -115,7 +115,7 @@ $ go run main.go
 
 # 🤖 Author
 
--  Belhi Romdona  <br>  [![GitHub](https://img.shields.io/badge/DimasYudhana-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/belhiibeng)
+-  Belhi Romdona  <br>  [![GitHub](https://img.shields.io/badge/BelhiRomdona-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/belhiibeng)
 -  Dimas A Yudhana  <br>  [![GitHub](https://img.shields.io/badge/DimasYudhana-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/dimasyudhana)
 
 <h5>
