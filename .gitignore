@@ -1,5 +1,5 @@
 *.idea
-local.env
+local.yaml
 cover.out
 mockery.sh
 storage-credential.json
