@@ -1,8 +1,8 @@
 package helper
 
 type DataResponse struct {
-	Code       int         `json:"code"`
-	Status     string      `json:"status"`
+	Code       int         `json:"code,omitempty"`
+	Status     string      `json:"status,omitempty"`
 	Message    string      `json:"message"`
 	Data       interface{} `json:"data,omitempty"`
 	Pagination interface{} `json:"pagination,omitempty"`

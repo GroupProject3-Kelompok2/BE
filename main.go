@@ -9,9 +9,7 @@ import (
 	"github.com/GroupProject3-Kelompok2/BE/app/config"
 	"github.com/GroupProject3-Kelompok2/BE/app/database"
 	"github.com/GroupProject3-Kelompok2/BE/app/router"
-	"github.com/robfig/cron"
 
-	"github.com/GroupProject3-Kelompok2/BE/utils/email"
 	"github.com/GroupProject3-Kelompok2/BE/utils/middlewares"
 	"github.com/labstack/echo/v4"
 )
@@ -27,11 +25,11 @@ func main() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
-	cron := cron.New()
-	cron.AddFunc("0 8 * * *", func() {
-		email.SendEmail(db)
-	})
-	cron.Start()
+	// cron := cron.New()
+	// cron.AddFunc("0 8 * * *", func() {
+	// 	email.SendEmail(db)
+	// })
+	// cron.Start()
 
 	go func() {
 		<-c

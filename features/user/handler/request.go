@@ -5,6 +5,7 @@ import "github.com/GroupProject3-Kelompok2/BE/features/user"
 type RegisterRequest struct {
 	Fullname string `json:"fullname" form:"fullname"`
 	Email    string `json:"email" form:"email"`
+	Phone    string `json:"phone" form:"phone"`
 	Password string `json:"password" form:"password"`
 }
 
@@ -14,6 +15,7 @@ func RequestToCore(data interface{}) user.UserCore {
 	case RegisterRequest:
 		res.Fullname = v.Fullname
 		res.Email = v.Email
+		res.Phone = v.Phone
 		res.Password = v.Password
 	default:
 		return user.UserCore{}
