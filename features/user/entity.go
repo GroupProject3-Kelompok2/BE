@@ -11,9 +11,10 @@ import (
 
 type UserCore struct {
 	UserID          string
-	Fullname        string
-	Email           string
-	Password        string
+	Fullname        string `validate:"required"`
+	Email           string `validate:"required,email"`
+	Phone           string `validate:"required"`
+	Password        string `validate:"required"`
 	ProfilePricture string
 	Role            string
 	CreatedAt       time.Time

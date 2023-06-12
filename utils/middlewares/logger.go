@@ -31,6 +31,7 @@ func Log() *zap.Logger {
 		),
 
 		zap.ErrorOutput(os.Stderr),
+		zap.AddCaller(),
 	)
 
 	return logger
@@ -42,7 +43,7 @@ func ZapGetConfig(production bool) zap.Config {
 	if production {
 		config = zap.NewProductionConfig()
 		config.Encoding = "console"
-		config.EncoderConfig.TimeKey = ""
+		config.EncoderConfig.TimeKey = "timestamp"
 	} else {
 		config = zap.NewDevelopmentConfig()
 	}
@@ -51,7 +52,7 @@ func ZapGetConfig(production bool) zap.Config {
 	config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
 	config.OutputPaths = []string{"stdout"}
 	timeEncoder := func(t time.Time, e zapcore.PrimitiveArrayEncoder) {
-		e.AppendString(time.Now().Local().Location().String())
+		e.AppendString(time.Now().Format("2006-01-02 15:04:05"))
 	}
 	config.EncoderConfig.EncodeTime = timeEncoder
 

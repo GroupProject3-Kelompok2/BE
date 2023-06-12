@@ -28,35 +28,34 @@ func (uh *userHandler) Register() echo.HandlerFunc {
 		request := RegisterRequest{}
 		errBind := c.Bind(&request)
 		if errBind != nil {
-			log.Error("error on bind request")
-			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "Failed", "Bad request", nil, nil))
+			log.Error("controller - error on bind request")
+			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request", nil, nil))
 		}
 
-		result, err := uh.service.Register(RequestToCore(request))
+		_, err := uh.service.Register(RequestToCore(request))
 		if err != nil {
 			switch {
 			case strings.Contains(err.Error(), "empty"):
-				log.Error("bad request, username, email, password cannot be empty")
-				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "Failed", "Bad request", nil, nil))
+				log.Error("bad request, request cannot be empty")
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request, request cannot be empty", nil, nil))
 			case strings.Contains(err.Error(), "duplicated"):
 				log.Error("bad request, duplicate data request")
-				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "Failed", "Bad request", nil, nil))
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request, duplicate data request", nil, nil))
 			case strings.Contains(err.Error(), "email"):
 				log.Error("bad request, invalid email format")
-				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "Failed", "Bad request", nil, nil))
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request, invalid email format", nil, nil))
 			case strings.Contains(err.Error(), "low password"):
 				log.Error("bad request, low password strength")
-				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "Failed", "Bad request", nil, nil))
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request, low password strength", nil, nil))
 			case strings.Contains(err.Error(), "password"):
 				log.Error("internal server error, hashing password")
-				return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "Failed", "Internal server error", nil, nil))
+				return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
 			default:
 				log.Error("internal server error")
-				return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "Failed", "Internal server error", nil, nil))
+				return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
 			}
 		}
 
-		resp := register(result)
-		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "Failed", "Successfully created an account.", resp, nil))
+		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "", "Successfully created an account.", nil, nil))
 	}
 }

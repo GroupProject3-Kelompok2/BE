@@ -6,7 +6,7 @@ import (
 	"github.com/GroupProject3-Kelompok2/BE/features/user"
 	"github.com/GroupProject3-Kelompok2/BE/utils/helper"
 	"github.com/GroupProject3-Kelompok2/BE/utils/middlewares"
-	"github.com/google/uuid"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 	"gorm.io/gorm"
 )
 
@@ -24,9 +24,9 @@ func New(db *gorm.DB) user.UserData {
 
 // Register implements user.UserData
 func (uq *userQuery) Register(request user.UserCore) (user.UserCore, error) {
-	userID, err := uuid.NewUUID()
+	userID, err := gonanoid.New()
 	if err != nil {
-		log.Warn("error while create uuid for admin")
+		log.Warn("error while create nano_id for user_id")
 		return user.UserCore{}, nil
 	}
 
@@ -36,7 +36,7 @@ func (uq *userQuery) Register(request user.UserCore) (user.UserCore, error) {
 		return user.UserCore{}, errors.New("error while hashing password")
 	}
 
-	request.UserID = userID.String()
+	request.UserID = userID
 	request.Password = hashed
 	request.ProfilePricture = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
 	req := userEntities(request)

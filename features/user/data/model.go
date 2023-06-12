@@ -14,7 +14,8 @@ type User struct {
 	UserID          string                    `gorm:"primaryKey;type:varchar(21)"`
 	Fullname        string                    `gorm:"type:varchar(100);not null"`
 	Email           string                    `gorm:"type:varchar(100);not null;unique"`
-	Password        string                    `gorm:"type:text"`
+	Phone           string                    `gorm:"type:varchar(15);not null"`
+	Password        string                    `gorm:"type:text;not null"`
 	ProfilePricture string                    `gorm:"type:text"`
 	Role            string                    `gorm:"type:enum('user', 'hoster'); default:'user'"`
 	CreatedAt       time.Time                 `gorm:"type:datetime"`
@@ -31,6 +32,7 @@ func userModels(u User) user.UserCore {
 		UserID:          u.UserID,
 		Fullname:        u.Fullname,
 		Email:           u.Email,
+		Phone:           u.Phone,
 		Password:        u.Password,
 		ProfilePricture: u.ProfilePricture,
 		Role:            u.Role,
@@ -45,6 +47,7 @@ func userEntities(u user.UserCore) User {
 		UserID:          u.UserID,
 		Fullname:        u.Fullname,
 		Email:           u.Email,
+		Phone:           u.Phone,
 		Password:        u.Password,
 		ProfilePricture: u.ProfilePricture,
 		Role:            u.Role,
