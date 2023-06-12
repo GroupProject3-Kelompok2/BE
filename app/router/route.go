@@ -31,6 +31,7 @@ func initUserRouter(db *gorm.DB, e *echo.Echo) {
 	userHandler := uh.New(userService)
 
 	e.POST("/register", userHandler.Register())
+	e.POST("/login", userHandler.Login())
 }
 
 func initHomestayRouter(db *gorm.DB, e *echo.Echo) {
