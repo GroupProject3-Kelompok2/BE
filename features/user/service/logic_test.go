@@ -144,13 +144,10 @@ func TestLogin(t *testing.T) {
 
 	t.Run("invalid email format", func(t *testing.T) {
 		request := user.UserCore{
-			Fullname: "admin",
 			Email:    "admin@.com",
-			Phone:    "081235288543",
 			Password: "@S3#cr3tP4ss#word123",
-			Role:     "user",
 		}
-		_, err := service.Register(request)
+		_, _, err := service.Login(request)
 		expectedErr := errors.New("invalid email format")
 		assert.NotNil(t, err)
 		assert.EqualError(t, err, expectedErr.Error(), "Expected error message does not match")
@@ -159,13 +156,10 @@ func TestLogin(t *testing.T) {
 
 	t.Run("password cannot be empty", func(t *testing.T) {
 		request := user.UserCore{
-			Fullname: "admin",
 			Email:    "admin@gmail.com",
-			Phone:    "081235288543",
 			Password: "",
-			Role:     "user",
 		}
-		_, err := service.Register(request)
+		_, _, err := service.Login(request)
 		expectedErr := errors.New("password cannot be empty")
 		assert.NotNil(t, err)
 		assert.EqualError(t, err, expectedErr.Error(), "Expected error message does not match")
@@ -213,6 +207,53 @@ func TestLogin(t *testing.T) {
 		assert.Equal(t, "", res.UserID)
 		assert.Equal(t, emptyToken, token)
 		assert.ErrorContains(t, err, "internal server error")
+		data.AssertExpectations(t)
+	})
+}
+
+func TestProfile(t *testing.T) {
+	data := mocks.NewUserData(t)
+	result := user.UserCore{
+		UserID:         "550e8400-e29b-41d4-a716-446655440000",
+		Fullname:       "admin",
+		Email:          "admin@mail.com",
+		Phone:          "081235288543",
+		Password:       "string",
+		ProfilePicture: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+		Role:           "user",
+	}
+	validate := validator.New()
+	service := New(data, validate)
+
+	t.Run("success get profile", func(t *testing.T) {
+		data.On("ProfileUser", "550e8400-e29b-41d4-a716-446655440000").Return(result, nil).Once()
+		res, err := service.ProfileUser("550e8400-e29b-41d4-a716-446655440000")
+		assert.Nil(t, err)
+		assert.Equal(t, result.UserID, res.UserID)
+		assert.Equal(t, result.Fullname, res.Fullname)
+		assert.Equal(t, result.Email, res.Email)
+		assert.Equal(t, result.Phone, res.Phone)
+		assert.Equal(t, result.Password, res.Password)
+		assert.Equal(t, result.ProfilePicture, res.ProfilePicture)
+		assert.Equal(t, result.Role, res.Role)
+		data.AssertExpectations(t)
+	})
+
+	t.Run("not found, error while retrieving user profile", func(t *testing.T) {
+		data.On("ProfileUser", "550e8400-e29b-41d4-a716-446655440000").Return(user.UserCore{}, errors.New("not found, error while retrieving user profile")).Once()
+		res, err := service.ProfileUser("550e8400-e29b-41d4-a716-446655440000")
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "not found")
+		assert.Equal(t, user.UserCore{}, res)
+		data.AssertExpectations(t)
+	})
+
+	t.Run("internal server error", func(t *testing.T) {
+		data.On("ProfileUser", "550e8400-e29b-41d4-a716-446655440000").Return(user.UserCore{}, errors.New("internal server error")).Once()
+		res, err := service.ProfileUser("550e8400-e29b-41d4-a716-446655440000")
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "internal server error")
+		assert.Equal(t, user.UserCore{}, res)
 		data.AssertExpectations(t)
 	})
 }

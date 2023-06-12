@@ -28,6 +28,22 @@ func (_m *UserHandler) Login() echo.HandlerFunc {
 	return r0
 }
 
+// ProfileUser provides a mock function with given fields:
+func (_m *UserHandler) ProfileUser() echo.HandlerFunc {
+	ret := _m.Called()
+
+	var r0 echo.HandlerFunc
+	if rf, ok := ret.Get(0).(func() echo.HandlerFunc); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(echo.HandlerFunc)
+		}
+	}
+
+	return r0
+}
+
 // Register provides a mock function with given fields:
 func (_m *UserHandler) Register() echo.HandlerFunc {
 	ret := _m.Called()
