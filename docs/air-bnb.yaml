@@ -85,12 +85,12 @@ paths:
         '500':
           $ref: '#/components/responses/Response500'
 
-  '/users/{user_id}':
+  '/users':
     get:
       tags:
         - User
-      summary: Get user
-      operationId: getUserByName
+      summary: Get user data of login user
+      operationId: getSpecificUser
       parameters:
         - name: user_id
           in: path
@@ -112,7 +112,7 @@ paths:
     put:
       tags:
         - User
-      summary: Updated user
+      summary: Update user data of login user
       description: This can only be done by the logged in user.
       operationId: updateUser
       parameters:
@@ -154,7 +154,7 @@ paths:
     delete:
       tags:
         - User
-      summary: Delete user
+      summary: Deactivate login user
       description: This can only be done by the logged in user.
       operationId: deleteUser
       parameters:
@@ -175,11 +175,11 @@ paths:
       security:
         - bearerAuth : []
 
-  '/users/{user_id}/reservation':
+  '/users/reservation':
     get:
       tags:
         - User
-      summary: Get user that booking homestay
+      summary: Get all reservations of login user
       parameters:
         - name: user_id
           in: path
@@ -198,7 +198,7 @@ paths:
       security:
         - bearerAuth : []
 
-  '/users/{user_id}/homestay':
+  '/users/homestays':
     get:
       tags:
         - User
@@ -238,7 +238,7 @@ paths:
         '405':
           description: Invalid input
 
-  '/homestays/{homestay_id}/review':
+  '/homestays/{homestay_id}/reviews':
     get:
       tags:
         - Homestay
