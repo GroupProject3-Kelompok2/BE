@@ -23,7 +23,7 @@ func New(ud user.UserData) user.UserService {
 
 // Register implements user.UserService
 func (us *userService) Register(request user.UserCore) (user.UserCore, error) {
-	if request.Username == "" || request.Email == "" || request.Password == "" {
+	if request.Fullname == "" || request.Email == "" || request.Password == "" {
 		log.Error("request cannot be empty")
 		return user.UserCore{}, errors.New("request cannot be empty")
 	}

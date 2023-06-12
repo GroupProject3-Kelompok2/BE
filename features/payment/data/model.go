@@ -3,15 +3,31 @@ package data
 import (
 	"time"
 
-	homestay "github.com/GroupProject3-Kelompok2/BE/features/homestay/data"
 	"gorm.io/gorm"
 )
 
 type Payment struct {
-	PaymentID string              `gorm:"primaryKey;type:varchar(50)"`
-	CreatedAt time.Time           `gorm:"type:datetime"`
-	UpdatedAt time.Time           `gorm:"type:datetime"`
-	DeletedAt gorm.DeletedAt      `gorm:"index"`
-	Buyer     string              `gorm:"type:varchar(50)"`
-	Item      []homestay.Homestay `gorm:"many2many:Reservation;foreignKey:PaymentID;joinForeignKey:Invoice"`
+	PaymentID     string `gorm:"primaryKey;type:varchar(21)"`
+	ReservationID string `gorm:"type:varchar(21)"`
+	Amount        uint
+	BankAccount   string         `gorm:"type:enum('bca', 'bri', 'bni', 'mandiri'); default:'bca'"`
+	VANumber      uint           `gorm:"type:varchar(21)"`
+	Status        bool           `gorm:"type:boolean"`
+	CreatedAt     time.Time      `gorm:"type:datetime"`
+	UpdatedAt     time.Time      `gorm:"type:datetime"`
+	DeletedAt     gorm.DeletedAt `gorm:"index"`
+	Reservation   Reservation    `gorm:"foreignKey:PaymentID;references:ReservationID"`
+}
+
+type Reservation struct {
+	ReservationID string `gorm:"primaryKey;type:varchar(21)"`
+	UserID        string `gorm:"primaryKey;type:varchar(21)"`
+	HomestayID    string `gorm:"primaryKey;type:varchar(21)"`
+	CheckInDate   time.Time
+	CheckOutDate  time.Time
+	Duration      uint8
+	Price         uint
+	CreatedAt     time.Time      `gorm:"type:datetime"`
+	UpdatedAt     time.Time      `gorm:"type:datetime"`
+	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }

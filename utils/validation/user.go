@@ -9,13 +9,13 @@ import (
 )
 
 type Register struct {
-	Username string `validate:"required"`
+	Fullname string `validate:"required"`
 	Email    string `validate:"required,email"`
 	Password string `validate:"required,strongPassword"`
 }
 
 type Login struct {
-	Username string `validate:"required"`
+	Fullname string `validate:"required"`
 	Password string `validate:"required"`
 }
 
@@ -24,7 +24,7 @@ func UserValidate(option string, data interface{}) (interface{}, error) {
 	case "register":
 		res := Register{}
 		if v, ok := data.(user.UserCore); ok {
-			res.Username = v.Username
+			res.Fullname = v.Fullname
 			res.Email = v.Email
 			res.Password = v.Password
 		}
@@ -36,7 +36,7 @@ func UserValidate(option string, data interface{}) (interface{}, error) {
 	case "login":
 		res := Login{}
 		if v, ok := data.(Login); ok {
-			res.Username = v.Username
+			res.Fullname = v.Fullname
 			res.Password = v.Password
 		}
 		err := Authenticate(res)
