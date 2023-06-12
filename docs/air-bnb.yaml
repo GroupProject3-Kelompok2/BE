@@ -24,8 +24,6 @@ tags:
     description: Product yang akan disewakan penyewa
   - name: Reservation
     description: Proses menyewa homestay
-  - name: Payment
-    description: Proses pembayaran setelah membuat pemesanan homestay oleh peminjam
   - name: Review
     description: Review untuk homestay yang telah disewa oleh peminjam
 
@@ -221,7 +219,7 @@ paths:
       security:
         - bearerAuth : []
 
-  /homestays:
+  '/homestays':
     post:
       tags:
         - Homestay
@@ -232,7 +230,7 @@ paths:
     get:
       tags:
         - Homestay
-      summary: Get list homestays
+      summary: Get list of all homestays with pictures and reviews
       operationId: addPet
       responses:
         '405':
@@ -242,8 +240,7 @@ paths:
     get:
       tags:
         - Homestay
-      summary: Find specific hemestay, homestay's reviews and rating accumulation
-      description: Find specific hemestay, homestay's reviews and rating accumulation
+      summary:  Get specific homestay with pictures, reviews, and booked dates
       parameters:
         - name: homestay_id
           in: path
@@ -269,7 +266,7 @@ paths:
     put:
       tags:
         - Homestay
-      summary: Update an existing homestay
+      summary: Update specific homestay
       parameters:
         - name: homestay_id
           in: path
@@ -289,7 +286,7 @@ paths:
     delete:
       tags:
         - Homestay
-      summary: Unregister a homestay
+      summary: Delete specific homestay
       parameters:
         - name: homestay_id
           in: path
@@ -303,13 +300,27 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Pet not found
+  
+  /homestays/{homestay_id}/pictures:
+    post:
+      tags:
+        - Homestay
+      summary: Add specific homestay picture
+  /homestays/pictures/{pictures_id}:
+    put:
+      tags:
+        - Homestay
+      summary: Edit specific picture of specific homestay
+    delete:
+      tags:
+        - Homestay
+      summary: Delete specific picture of specific homestay
 
   /reservations:
     post:
       tags:
         - Reservation
-      summary: User can make a reservation
-      description: Endpoint login user to the web-application
+      summary: Create homestay reservation
       requestBody:
         required: true
         content:
@@ -330,37 +341,15 @@ paths:
       security:
         - bearerAuth: []
 
-  '/reservations/{reservation_id}/payment':
+  '/reservations/{reservation_id}':
     get:
       tags:
         - Reservation
-      summary: Find specific reservation
-      description: Returns a single pet
-      parameters:
-        - name: reservation_id
-          in: path
-          description: Reservation ID
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          $ref: '#/components/responses/Response200Reservation'
-        '400':
-          $ref: '#/components/responses/Response400'
-        '404':
-          $ref: '#/components/responses/Response404'
-        '500':
-          $ref: '#/components/responses/Response500'
-      security:
-        - bearerAuth: []
-
-  '/reservations/{reservation_id}':
+      summary: Get specific reservation with payment data
     put:
       tags:
         - Reservation
-      summary: Edit an existing reservation
+      summary: Update specific reservation
       description: Endpoint edit reservation
       parameters:
       - name: reservation_id
@@ -392,7 +381,7 @@ paths:
     delete:
       tags:
         - Reservation
-      summary: User can delete a reservation
+      summary: Cancel specific reservation
       description: Returns a single pet
       parameters:
         - name: reservation_id
@@ -411,102 +400,15 @@ paths:
           $ref: '#/components/responses/Response500'
       security:
         - bearerAuth: []
-
-  /payments:
+  '/reservations/{reservation_id}/payment':
     post:
       tags:
-        - Payment
-      summary: Submit Payment
-      description: Submit Payment
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/reservations"
-            example:
-              reservation_id: "string-uuid"
-      responses:
-        '201':
-          $ref: '#/components/responses/Response201SubmitPayment'
-        '400':
-          $ref: '#/components/responses/Response400'
-        '500':
-          $ref: '#/components/responses/Response500'
-      security:
-        - bearerAuth: []
-
-  '/payments/{payment_id}':
-    get:
+        - Reservation
+      summary: Create payment for specific reservation
+    put: 
       tags:
-        - Payment
-      summary: Find specific payment
-      description: Returns a single pet
-      parameters:
-        - name: payment_id
-          in: path
-          description: Payment ID
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          $ref: '#/components/responses/Response200GetPayment'
-        '400':
-          $ref: '#/components/responses/Response400'
-        '404':
-          $ref: '#/components/responses/Response404'
-        '500':
-          $ref: '#/components/responses/Response500'
-      security:
-        - bearerAuth: []
-
-    put:
-      tags:
-        - Payment
-      summary: Update an existing payment
-      parameters:
-        - name: payment_id
-          in: path
-          description: Payment ID
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          $ref: '#/components/responses/Response200'
-        '400':
-          $ref: '#/components/responses/Response400'
-        '404':
-          $ref: '#/components/responses/Response404'
-        '500':
-          $ref: '#/components/responses/Response500'
-      security:
-        - bearerAuth: []
-
-    delete:
-      tags:
-        - Payment
-      summary: Delete a payment
-      parameters:
-        - name: payment_id
-          in: path
-          description: Payment ID
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          $ref: '#/components/responses/Response200'
-        '404':
-          $ref: '#/components/responses/Response404'
-        '500':
-          $ref: '#/components/responses/Response500'
-      security:
-        - bearerAuth: []
+        - Reservation
+      summary: Update payment of specific reservation  
 
   /reviews:
     post:
