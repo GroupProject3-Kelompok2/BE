@@ -29,7 +29,7 @@ func (uh *userHandler) Register() echo.HandlerFunc {
 		errBind := c.Bind(&request)
 		if errBind != nil {
 			log.Error("controller - error on bind request")
-			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request", nil, nil))
+			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request"+errBind.Error(), nil, nil))
 		}
 
 		_, err := uh.service.Register(RequestToCore(request))
@@ -45,8 +45,8 @@ func (uh *userHandler) Register() echo.HandlerFunc {
 				log.Error("bad request, invalid email format")
 				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request, invalid email format", nil, nil))
 			case strings.Contains(err.Error(), "low password"):
-				log.Error("bad request, low password strength")
-				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request, low password strength", nil, nil))
+				log.Error("bad request, password does not match")
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request, password does not match", nil, nil))
 			case strings.Contains(err.Error(), "password"):
 				log.Error("internal server error, hashing password")
 				return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
@@ -57,5 +57,45 @@ func (uh *userHandler) Register() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "", "Successfully created an account.", nil, nil))
+	}
+}
+
+// Login implements user.UserHandler
+func (uh *userHandler) Login() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		request := LoginRequest{}
+		errBind := c.Bind(&request)
+		if errBind != nil {
+			c.Logger().Error("error on bind login input")
+			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request"+errBind.Error(), nil, nil))
+		}
+
+		resp, token, err := uh.service.Login(RequestToCore(request))
+		if err != nil {
+			switch {
+			case strings.Contains(err.Error(), "invalid email format"):
+				log.Error("bad request, invalid email format")
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request, invalid email format", nil, nil))
+			case strings.Contains(err.Error(), "password cannot be empty"):
+				log.Error("bad request, password cannot be empty")
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request, password cannot be empty", nil, nil))
+			case strings.Contains(err.Error(), "invalid email and password"):
+				log.Error("bad request, invalid email and password")
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request, invalid email and password", nil, nil))
+			case strings.Contains(err.Error(), "password does not match"):
+				log.Error("bad request, password does not match")
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request, password does not match", nil, nil))
+			case strings.Contains(err.Error(), "error while creating jwt token"):
+				log.Error("internal server error, error while creating jwt token")
+				return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
+			default:
+				log.Error("internal server error")
+				return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
+			}
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Successful login", loginResponse{
+			Email: resp.Email, Token: token,
+		}, nil))
 	}
 }
