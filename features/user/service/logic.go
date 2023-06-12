@@ -117,3 +117,27 @@ func (us *userService) ProfileUser(userId string) (user.UserCore, error) {
 	}
 	return result, nil
 }
+
+// UpdateProfile implements user.UserService
+func (us *userService) UpdateProfile(userId string, request user.UserCore) error {
+	if request.Fullname == "" && request.Email == "" && request.Phone == "" && request.ProfilePicture == "" {
+		log.Error("request cannot be empty")
+		return errors.New("request cannot be empty")
+	}
+
+	err := us.query.UpdateProfile(userId, request)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			log.Error("user profile record not found")
+			return errors.New("user profile record not found")
+		} else if strings.Contains(err.Error(), "duplicate data entry") {
+			log.Error("failed to update user, duplicate data entry")
+			return errors.New("failed to update user, duplicate data entry")
+		} else {
+			log.Error("internal server error")
+			return errors.New("internal server error")
+		}
+	}
+
+	return nil
+}

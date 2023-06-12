@@ -14,6 +14,14 @@ type LoginRequest struct {
 	Password string `json:"password" form:"password"`
 }
 
+type UpdateProfileRequest struct {
+	Fullname       *string `json:"fullname" form:"fullname"`
+	Email          *string `json:"email" form:"email"`
+	Phone          *string `json:"phone" form:"phone"`
+	Password       *string `json:"password" form:"password"`
+	ProfilePicture *string `json:"profile_picture" form:"profile_picture"`
+}
+
 func RequestToCore(data interface{}) user.UserCore {
 	res := user.UserCore{}
 	switch v := data.(type) {
@@ -25,6 +33,22 @@ func RequestToCore(data interface{}) user.UserCore {
 	case LoginRequest:
 		res.Email = v.Email
 		res.Password = v.Password
+	case *UpdateProfileRequest:
+		if v.Fullname != nil {
+			res.Fullname = *v.Fullname
+		}
+		if v.Email != nil {
+			res.Email = *v.Email
+		}
+		if v.Phone != nil {
+			res.Password = *v.Phone
+		}
+		if v.Password != nil {
+			res.Password = *v.Password
+		}
+		if v.ProfilePicture != nil {
+			res.ProfilePicture = *v.ProfilePicture
+		}
 	default:
 		return user.UserCore{}
 	}

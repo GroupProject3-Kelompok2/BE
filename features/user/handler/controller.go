@@ -121,3 +121,30 @@ func (uh *userHandler) ProfileUser() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Successfully operation.", resp, nil))
 	}
 }
+
+// UpdateUser implements user.UserHandler
+func (uh *userHandler) UpdateUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		request := UpdateProfileRequest{}
+		userId, _, errToken := middlewares.ExtractToken(c)
+		if errToken != nil {
+			c.Logger().Error("missing or malformed JWT")
+			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Missing or Malformed JWT.", nil, nil))
+		}
+
+		err := uh.service.UpdateProfile(userId, RequestToCore(&request))
+		if err != nil {
+			if strings.Contains(err.Error(), "empty") {
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad Request, data cannot be empty while updating", nil, nil))
+			}
+			if strings.Contains(err.Error(), "duplicated") {
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request, duplicate data entry", nil, nil))
+			}
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
+			}
+		}
+
+		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "", "Successfully updated an account.", nil, nil))
+	}
+}
