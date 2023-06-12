@@ -175,7 +175,7 @@ paths:
       security:
         - bearerAuth : []
 
-  '/users/reservation':
+  '/users/reservations':
     get:
       tags:
         - User
@@ -202,7 +202,7 @@ paths:
     get:
       tags:
         - User
-      summary: Get user that hosting homestay
+      summary: Get all homestays of login user
       parameters:
         - name: user_id
           in: path
@@ -238,7 +238,7 @@ paths:
         '405':
           description: Invalid input
 
-  '/homestays/{homestay_id}/reviews':
+  '/homestays/{homestay_id}':
     get:
       tags:
         - Homestay
@@ -266,8 +266,6 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Pet not found
-
-  '/homestays/{homestay_id}':
     put:
       tags:
         - Homestay
