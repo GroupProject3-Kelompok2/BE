@@ -2,6 +2,7 @@ package database
 
 import (
 	homestay "github.com/GroupProject3-Kelompok2/BE/features/homestay/data"
+	homestay_picture "github.com/GroupProject3-Kelompok2/BE/features/homestay_picture/data"
 	payment "github.com/GroupProject3-Kelompok2/BE/features/payment/data"
 	reservation "github.com/GroupProject3-Kelompok2/BE/features/reservation/data"
 	review "github.com/GroupProject3-Kelompok2/BE/features/review/data"
@@ -10,16 +11,11 @@ import (
 )
 
 func InitMigration(db *gorm.DB) error {
-	err := db.SetupJoinTable(&payment.Payment{}, "Item", &reservation.Reservation{})
-	if err != nil {
-		log.Sugar().Warnf("setup join table error", err)
-		return err
-	}
-
-	err = db.AutoMigrate(
+	err := db.AutoMigrate(
 		&user.User{},
 		&homestay.Homestay{},
-		&homestay.HomestayPicture{},
+		&homestay_picture.HomestayPicture{},
+		&reservation.Reservation{},
 		&payment.Payment{},
 		&review.Review{},
 	)

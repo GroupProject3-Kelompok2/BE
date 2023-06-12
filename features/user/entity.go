@@ -10,17 +10,18 @@ import (
 )
 
 type UserCore struct {
-	UserID      string
-	Username    string
-	Email       string
-	Password    string
-	UserPicture string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   time.Time
-	Homestays   []homestay.HomestayCore
-	Reviews     []review.ReviewCore
-	Payments    []payment.PaymentCore
+	UserID          string
+	Fullname        string
+	Email           string
+	Password        string
+	ProfilePricture string
+	Role            string
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	DeletedAt       time.Time
+	Homestays       []homestay.HomestayCore
+	Reviews         []review.ReviewCore
+	Payments        []payment.PaymentCore
 }
 
 type UserHandler interface {

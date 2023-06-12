@@ -28,7 +28,7 @@ func main() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
 	cron := cron.New()
-	cron.AddFunc("1 * * * *", func() {
+	cron.AddFunc("0 8 * * *", func() {
 		email.SendEmail(db)
 	})
 	cron.Start()
