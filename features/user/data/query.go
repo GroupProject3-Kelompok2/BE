@@ -55,3 +55,34 @@ func (uq *userQuery) Register(request user.UserCore) (user.UserCore, error) {
 	log.Sugar().Infof("new user has been created: %s", req.UserID)
 	return userModels(req), nil
 }
+
+// Login implements user.UserData
+func (uq *userQuery) Login(request user.UserCore) (user.UserCore, string, error) {
+	result := User{}
+	query := uq.db.Table("users").Where("email = ?", request.Email).First(&result)
+	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
+		log.Error("user record not found, invalid email and password")
+		return user.UserCore{}, "", errors.New("invalid email and password")
+	}
+
+	rowAffect := query.RowsAffected
+	if rowAffect == 0 {
+		log.Warn("no user has been created")
+		return user.UserCore{}, "", errors.New("row affected : 0")
+	}
+
+	match1 := helper.MatchPassword(request.Password, result.Password)
+	log.Sugar().Warnf("match password: %v", match1)
+	if !match1 {
+		return user.UserCore{}, "", errors.New("password does not match")
+	}
+
+	token, err := middlewares.CreateToken(result.UserID, result.Role)
+	if err != nil {
+		log.Error("error while creating jwt token")
+		return user.UserCore{}, "", errors.New("error while creating jwt token")
+	}
+
+	log.Sugar().Infof("user has been logged in: %s", result.UserID)
+	return userModels(result), token, nil
+}

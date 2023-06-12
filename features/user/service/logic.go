@@ -64,3 +64,41 @@ func (us *userService) Register(request user.UserCore) (user.UserCore, error) {
 	log.Sugar().Infof("new user has been created: %s", result.UserID)
 	return result, nil
 }
+
+// Login implements user.UserService
+func (us *userService) Login(request user.UserCore) (user.UserCore, string, error) {
+	err := us.validate.Struct(request)
+	if err != nil {
+		switch {
+		case strings.Contains(err.Error(), "Email"):
+			log.Warn("invalid email format")
+			return user.UserCore{}, "", errors.New("invalid email format")
+		case strings.Contains(err.Error(), "Password"):
+			log.Warn("password cannot be empty")
+			return user.UserCore{}, "", errors.New("password cannot be empty")
+		}
+	}
+
+	result, token, err := us.query.Login(request)
+	if err != nil {
+		message := ""
+		switch {
+		case strings.Contains(err.Error(), "invalid email and password"):
+			log.Error("invalid email and password")
+			message = "invalid email and password"
+		case strings.Contains(err.Error(), "password does not match"):
+			log.Error("password does not match")
+			message = "password does not match"
+		case strings.Contains(err.Error(), "error while creating jwt token"):
+			log.Error("error while creating jwt token")
+			message = "error while creating jwt token"
+		default:
+			log.Error("internal server error")
+			message = "internal server error"
+		}
+		return user.UserCore{}, "", errors.New(message)
+	}
+
+	log.Sugar().Infof("user has been logged in: %s", result.UserID)
+	return result, token, nil
+}
