@@ -102,3 +102,18 @@ func (us *userService) Login(request user.UserCore) (user.UserCore, string, erro
 	log.Sugar().Infof("user has been logged in: %s", result.UserID)
 	return result, token, nil
 }
+
+// ProfileUser implements user.UserService
+func (us *userService) ProfileUser(userId string) (user.UserCore, error) {
+	result, err := us.query.ProfileUser(userId)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			log.Error("not found, error while retrieving user profile")
+			return user.UserCore{}, errors.New("not found, error while retrieving user profile")
+		} else {
+			log.Error("internal server error")
+			return user.UserCore{}, errors.New("internal server error")
+		}
+	}
+	return result, nil
+}

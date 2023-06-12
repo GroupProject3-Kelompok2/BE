@@ -38,7 +38,7 @@ func (uq *userQuery) Register(request user.UserCore) (user.UserCore, error) {
 
 	request.UserID = userID
 	request.Password = hashed
-	request.ProfilePricture = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+	request.ProfilePicture = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
 	req := userEntities(request)
 	query := uq.db.Table("users").Create(&req)
 	if query.Error != nil {
@@ -85,4 +85,16 @@ func (uq *userQuery) Login(request user.UserCore) (user.UserCore, string, error)
 
 	log.Sugar().Infof("user has been logged in: %s", result.UserID)
 	return userModels(result), token, nil
+}
+
+// ProfileUser implements user.UserData
+func (uq *userQuery) ProfileUser(userId string) (user.UserCore, error) {
+	users := User{}
+	query := uq.db.Raw("SELECT * FROM users WHERE user_id = ? AND deleted_at IS NULL", userId).Scan(&users)
+	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
+		log.Error("user profile record not found")
+		return user.UserCore{}, errors.New("user profile record not found")
+	}
+
+	return userModels(users), nil
 }

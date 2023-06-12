@@ -4,6 +4,7 @@ import (
 	ud "github.com/GroupProject3-Kelompok2/BE/features/user/data"
 	uh "github.com/GroupProject3-Kelompok2/BE/features/user/handler"
 	us "github.com/GroupProject3-Kelompok2/BE/features/user/service"
+	"github.com/GroupProject3-Kelompok2/BE/utils/middlewares"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -28,4 +29,5 @@ func initUserRouter(db *gorm.DB, e *echo.Echo) {
 
 	e.POST("/register", userHandler.Register())
 	e.POST("/login", userHandler.Login())
+	e.GET("/users/:id", userHandler.ProfileUser(), middlewares.JWTMiddleware())
 }

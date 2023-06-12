@@ -43,6 +43,30 @@ func (_m *UserService) Login(request user.UserCore) (user.UserCore, string, erro
 	return r0, r1, r2
 }
 
+// ProfileUser provides a mock function with given fields: userId
+func (_m *UserService) ProfileUser(userId string) (user.UserCore, error) {
+	ret := _m.Called(userId)
+
+	var r0 user.UserCore
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (user.UserCore, error)); ok {
+		return rf(userId)
+	}
+	if rf, ok := ret.Get(0).(func(string) user.UserCore); ok {
+		r0 = rf(userId)
+	} else {
+		r0 = ret.Get(0).(user.UserCore)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(userId)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Register provides a mock function with given fields: request
 func (_m *UserService) Register(request user.UserCore) (user.UserCore, error) {
 	ret := _m.Called(request)
