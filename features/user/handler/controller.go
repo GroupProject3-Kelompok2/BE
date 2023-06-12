@@ -95,7 +95,29 @@ func (uh *userHandler) Login() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Successful login", loginResponse{
-			Email: resp.Email, Token: token,
+			UserID: resp.UserID, Email: resp.Email, Token: token,
 		}, nil))
+	}
+}
+
+// ProfileUser implements user.UserHandler
+func (uh *userHandler) ProfileUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userId, _, err := middlewares.ExtractToken(c)
+		if err != nil {
+			log.Error("missing or malformed JWT")
+			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Missing or Malformed JWT", nil, nil))
+		}
+
+		user, err := uh.service.ProfileUser(userId)
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "The requested resource was not found", nil, nil))
+			}
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
+		}
+
+		resp := profileUser(user)
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Successfully operation.", resp, nil))
 	}
 }

@@ -10,32 +10,35 @@ import (
 )
 
 type UserCore struct {
-	UserID          string
-	Fullname        string `validate:"required"`
-	Email           string `validate:"required,email"`
-	Phone           string `validate:"required"`
-	Password        string `validate:"required"`
-	ProfilePricture string
-	Role            string
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	DeletedAt       time.Time
-	Homestays       []homestay.HomestayCore
-	Reviews         []review.ReviewCore
-	Payments        []payment.PaymentCore
+	UserID         string
+	Fullname       string `validate:"required"`
+	Email          string `validate:"required,email"`
+	Phone          string `validate:"required"`
+	Password       string `validate:"required"`
+	ProfilePicture string
+	Role           string
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	DeletedAt      time.Time
+	Homestays      []homestay.HomestayCore
+	Reviews        []review.ReviewCore
+	Payments       []payment.PaymentCore
 }
 
 type UserHandler interface {
 	Register() echo.HandlerFunc
 	Login() echo.HandlerFunc
+	ProfileUser() echo.HandlerFunc
 }
 
 type UserService interface {
 	Register(request UserCore) (UserCore, error)
 	Login(request UserCore) (UserCore, string, error)
+	ProfileUser(userId string) (UserCore, error)
 }
 
 type UserData interface {
 	Register(request UserCore) (UserCore, error)
 	Login(request UserCore) (UserCore, string, error)
+	ProfileUser(userId string) (UserCore, error)
 }
