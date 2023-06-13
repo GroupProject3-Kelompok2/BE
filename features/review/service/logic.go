@@ -1,1 +1,47 @@
 package service
+
+import (
+	"errors"
+	"strings"
+
+	"github.com/GroupProject3-Kelompok2/BE/features/review"
+	"github.com/GroupProject3-Kelompok2/BE/utils/middlewares"
+	"github.com/go-playground/validator/v10"
+)
+
+var log = middlewares.Log()
+
+type reviewService struct {
+	query    review.ReviewData
+	validate *validator.Validate
+}
+
+func New(rd review.ReviewData, v *validator.Validate) review.ReviewService {
+	return &reviewService{
+		query:    rd,
+		validate: v,
+	}
+}
+
+// AddReview implements review.ReviewService
+func (rs *reviewService) AddReview(userId string, request review.ReviewCore) error {
+	errVal := rs.validate.Struct(request)
+	if errVal != nil {
+		switch {
+		case strings.Contains(errVal.Error(), "HomestayID"):
+			log.Warn("homestay_id cannot be empty")
+			return errors.New("homestay_id cannot be empty")
+		case strings.Contains(errVal.Error(), "Review"):
+			log.Warn("review cannot be empty")
+			return errors.New("review cannot be empty")
+		}
+	}
+
+	err := rs.query.AddReview(userId, request)
+	if err != nil {
+		log.Error("internal server error")
+		return errors.New("internal server error")
+	}
+
+	return nil
+}

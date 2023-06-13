@@ -3,18 +3,20 @@ package review
 import (
 	"time"
 
+	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
 type ReviewCore struct {
-	ReviewID   uint
-	Review     string
-	Rating     uint
+	ReviewID   string
+	UserID     string
+	HomestayID string `validate:"required"`
+	Review     string `validate:"required"`
+	Rating     uint8
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 	DeletedAt  time.Time
 	Reviewer   string
-	HomestayID string
 	User       UserCore
 	Homestay   HomestayCore
 }
@@ -38,4 +40,16 @@ type HomestayCore struct {
 	UpdatedAt  time.Time
 	DeletedAt  gorm.DeletedAt
 	Hoster     string
+}
+
+type ReviewHandler interface {
+	AddReview() echo.HandlerFunc
+}
+
+type ReviewService interface {
+	AddReview(userId string, request ReviewCore) error
+}
+
+type ReviewData interface {
+	AddReview(userId string, request ReviewCore) error
 }
