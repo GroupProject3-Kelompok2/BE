@@ -1,6 +1,9 @@
 package router
 
 import (
+	_homestayData "github.com/GroupProject3-Kelompok2/BE/features/homestay/data"
+	_homestayHandler "github.com/GroupProject3-Kelompok2/BE/features/homestay/handler"
+	_homestayService "github.com/GroupProject3-Kelompok2/BE/features/homestay/service"
 	ud "github.com/GroupProject3-Kelompok2/BE/features/user/data"
 	uh "github.com/GroupProject3-Kelompok2/BE/features/user/handler"
 	us "github.com/GroupProject3-Kelompok2/BE/features/user/service"
@@ -19,6 +22,7 @@ func InitRouter(db *gorm.DB, e *echo.Echo) {
 	}))
 
 	initUserRouter(db, e)
+	initHomestayRouter(db, e)
 }
 
 func initUserRouter(db *gorm.DB, e *echo.Echo) {
@@ -32,4 +36,12 @@ func initUserRouter(db *gorm.DB, e *echo.Echo) {
 	e.GET("/users", userHandler.ProfileUser(), middlewares.JWTMiddleware())
 	e.PUT("/users", userHandler.UpdateUser(), middlewares.JWTMiddleware())
 	e.DELETE("/users", userHandler.DeactiveUser(), middlewares.JWTMiddleware())
+}
+
+func initHomestayRouter(db *gorm.DB, e *echo.Echo) {
+	homestayData := _homestayData.New(db)
+	homestayService := _homestayService.New(homestayData)
+	homestayHandler := _homestayHandler.New(homestayService)
+
+	e.POST("/homestays", homestayHandler.CreateHomestay(), middlewares.JWTMiddleware())
 }
