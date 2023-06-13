@@ -16,24 +16,12 @@ type Homestay struct {
 	Name             string                             `gorm:"type:text"`
 	Description      string                             `gorm:"type:text"`
 	Address          string                             `gorm:"type:text"`
-	Status           bool                               `gorm:"type:boolean"`
+	Price            float64                            `gorm:"type:decimal(15,2)"`
+	Status           bool                               `gorm:"type:boolean;default false"`
 	CreatedAt        time.Time                          `gorm:"type:datetime"`
 	UpdatedAt        time.Time                          `gorm:"type:datetime"`
 	DeletedAt        gorm.DeletedAt                     `gorm:"index"`
-	User             User                               `gorm:"foreignKey:UserID"`
 	HomestayPictures []homestay_picture.HomestayPicture `gorm:"foreignKey:HomestayID"`
 	Reservations     []reservation.Reservation          `gorm:"foreignKey:HomestayID"`
 	Reviews          []review.Review                    `gorm:"foreignKey:HomestayID"`
-}
-
-type User struct {
-	UserID          string         `gorm:"primaryKey;type:varchar(21)"`
-	Fullname        string         `gorm:"type:varchar(100);not null"`
-	Email           string         `gorm:"type:varchar(100);not null;unique"`
-	Password        string         `gorm:"type:text"`
-	ProfilePricture string         `gorm:"type:text"`
-	Role            string         `gorm:"type:enum('user', 'hoster'); default:'user'"`
-	CreatedAt       time.Time      `gorm:"type:datetime"`
-	UpdatedAt       time.Time      `gorm:"type:datetime"`
-	DeletedAt       gorm.DeletedAt `gorm:"index"`
 }
