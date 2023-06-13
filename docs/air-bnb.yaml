@@ -203,6 +203,11 @@ paths:
           $ref: '#/components/responses/Response500'
       security:
         - bearerAuth : []
+  '/users/reviews':
+    get:
+      tags:
+        - User
+      summary: Get all reviews of login user
 
   '/users/homestays':
     get:
@@ -225,7 +230,7 @@ paths:
         '500':
           $ref: '#/components/responses/Response500'
       security:
-        - bearerAuth : []
+        - bearerAuth : []     
 
   '/homestays':
     post:
@@ -473,31 +478,6 @@ paths:
           $ref: '#/components/responses/Response500'
       security:
         - bearerAuth: []
-
-  '/reviews/{review_id}':
-    get:
-      tags:
-        - Review
-      summary: Find specific reservation
-      description: Returns a single pet
-      parameters:
-        - name: review_id
-          in: path
-          description: Review ID
-          required: true
-          schema:
-            type: integer
-            format: uint64
-      responses:
-        '200':
-          $ref: '#/components/responses/Response200Review'
-        '404':
-          $ref: '#/components/responses/Response404'
-        '500':
-          $ref: '#/components/responses/Response500'
-      security:
-        - bearerAuth: []
-
     put:
       tags:
         - Review
