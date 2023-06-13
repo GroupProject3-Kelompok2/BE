@@ -161,3 +161,24 @@ func (uh *userHandler) UpdateUser() echo.HandlerFunc {
 		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "", "Successfully updated an account.", nil, nil))
 	}
 }
+
+// DeactiveUser implements user.UserHandler
+func (uh *userHandler) DeactiveUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userId, _, errToken := middlewares.ExtractToken(c)
+		if errToken != nil {
+			c.Logger().Error("missing or malformed JWT")
+			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Missing or Malformed JWT.", nil, nil))
+		}
+
+		err := uh.service.DeactiveUser(userId)
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "The requested resource was not found", nil, nil))
+			}
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal Server Error", nil, nil))
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusCreated, "", "Successfully deleted an account", nil, nil))
+	}
+}
