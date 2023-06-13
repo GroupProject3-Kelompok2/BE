@@ -45,4 +45,6 @@ func initHomestayRouter(db *gorm.DB, e *echo.Echo) {
 	homestayHandler := _homestayHandler.New(homestayService)
 
 	e.POST("/homestays", homestayHandler.CreateHomestay(), middlewares.JWTMiddleware())
+	e.PUT("/homestays/:homestay_id", homestayHandler.UpdateHomestayById(), middlewares.JWTMiddleware())
+	e.DELETE("/homestays/:homestay_id", homestayHandler.DeleteHomestayById(), middlewares.JWTMiddleware())
 }

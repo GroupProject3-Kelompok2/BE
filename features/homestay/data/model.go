@@ -17,7 +17,7 @@ type Homestay struct {
 	Description  string                    `gorm:"type:text"`
 	Address      string                    `gorm:"type:text"`
 	Price        float64                   `gorm:"type:decimal(15,2)"`
-	Status       bool                      `gorm:"type:boolean;default true"`
+	Status       bool                      `gorm:"type:boolean;default:true"`
 	CreatedAt    time.Time                 `gorm:"type:datetime"`
 	UpdatedAt    time.Time                 `gorm:"type:datetime"`
 	DeletedAt    gorm.DeletedAt            `gorm:"index"`
