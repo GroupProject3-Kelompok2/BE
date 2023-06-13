@@ -5,7 +5,7 @@ import (
 )
 
 type HomestayCore struct {
-	HomestayID  string
+	HomestayID  string  `validate:"required"`
 	UserID      string  `validate:"required"`
 	Name        string  `validate:"required"`
 	Description string  `validate:"required"`

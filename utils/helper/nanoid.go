@@ -1,7 +1,7 @@
 package helper
 
-import "github.com/aidarkhanov/nanoid"
+import gonanoid "github.com/matoous/go-nanoid/v2"
 
-func GenerateId() string {
-	return nanoid.New()
+func GenerateId() (string, error) {
+	return gonanoid.New()
 }

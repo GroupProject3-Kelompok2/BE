@@ -61,7 +61,7 @@ func HomestayPictureCore(pictureData HomestayPicture) homestay.HomestayPictureCo
 func HomestayModel(dataCore homestay.HomestayCore) Homestay {
 	return Homestay{
 		HomestayID:  dataCore.HomestayID,
-		UserID:      dataCore.HomestayID,
+		UserID:      dataCore.UserID,
 		Name:        dataCore.Name,
 		Description: dataCore.Description,
 		Address:     dataCore.Address,

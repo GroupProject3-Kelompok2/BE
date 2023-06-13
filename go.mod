@@ -3,7 +3,6 @@ module github.com/GroupProject3-Kelompok2/BE
 go 1.20
 
 require (
-	github.com/aidarkhanov/nanoid v1.0.8
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/spf13/viper v1.16.0
