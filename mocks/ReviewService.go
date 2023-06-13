@@ -26,6 +26,20 @@ func (_m *ReviewService) AddReview(userId string, request review.ReviewCore) err
 	return r0
 }
 
+// DeleteReview provides a mock function with given fields: userId, reviewId
+func (_m *ReviewService) DeleteReview(userId string, reviewId string) error {
+	ret := _m.Called(userId, reviewId)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(userId, reviewId)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // EditReview provides a mock function with given fields: userId, reviewId, request
 func (_m *ReviewService) EditReview(userId string, reviewId string, request review.ReviewCore) error {
 	ret := _m.Called(userId, reviewId, request)
