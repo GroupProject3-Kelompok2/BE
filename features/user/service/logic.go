@@ -152,3 +152,19 @@ func (us *userService) DeactiveUser(userId string) error {
 
 	return nil
 }
+
+// UpgradeProfile implements user.UserService
+func (us *userService) UpgradeProfile(userId string, request user.UserCore) error {
+	err := us.query.UpgradeProfile(userId, request)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			log.Error("user profile record not found")
+			return errors.New("user profile record not found")
+		} else {
+			log.Error("internal server error")
+			return errors.New("internal server error")
+		}
+	}
+
+	return nil
+}

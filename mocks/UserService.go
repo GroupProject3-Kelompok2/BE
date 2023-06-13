@@ -119,6 +119,20 @@ func (_m *UserService) UpdateProfile(userId string, request user.UserCore) error
 	return r0
 }
 
+// UpgradeProfile provides a mock function with given fields: userId, request
+func (_m *UserService) UpgradeProfile(userId string, request user.UserCore) error {
+	ret := _m.Called(userId, request)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, user.UserCore) error); ok {
+		r0 = rf(userId, request)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 type mockConstructorTestingTNewUserService interface {
 	mock.TestingT
 	Cleanup(func())

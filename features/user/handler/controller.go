@@ -182,3 +182,27 @@ func (uh *userHandler) DeactiveUser() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusCreated, "", "Successfully deleted an account", nil, nil))
 	}
 }
+
+// UpgradeUser implements user.UserHandler
+func (uh *userHandler) UpgradeUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		request := UpgradeProfileRequest{}
+		userId, _, errToken := middlewares.ExtractToken(c)
+		if errToken != nil {
+			c.Logger().Error("missing or malformed JWT")
+			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Missing or Malformed JWT.", nil, nil))
+		}
+
+		err := uh.service.UpgradeProfile(userId, RequestToCore(&request))
+		if err != nil {
+			if strings.Contains(err.Error(), "empty") {
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad Request, data cannot be empty while updating", nil, nil))
+			}
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
+			}
+		}
+
+		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "", "Successfully updated role.", nil, nil))
+	}
+}

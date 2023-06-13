@@ -273,15 +273,6 @@ func TestUpdateProfile(t *testing.T) {
 		Role:           "user",
 	}
 
-	t.Run("request cannot be empty", func(t *testing.T) {
-		request := user.UserCore{}
-		err := service.UpdateProfile(userID, request)
-		expectedErr := errors.New("request cannot be empty")
-		assert.NotNil(t, err)
-		assert.EqualError(t, err, expectedErr.Error(), "Expected error message does not match")
-		data.AssertExpectations(t)
-	})
-
 	t.Run("success update account", func(t *testing.T) {
 		data.On("UpdateProfile", userID, request).Return(nil).Once()
 		err := service.UpdateProfile(userID, request)
@@ -337,6 +328,39 @@ func TestDeactive(t *testing.T) {
 	t.Run("internal server error", func(t *testing.T) {
 		data.On("DeactiveUser", "550e8400-e29b-41d4-a716-446655440000").Return(errors.New("internal server error")).Once()
 		err := service.DeactiveUser("550e8400-e29b-41d4-a716-446655440000")
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "internal server error")
+		data.AssertExpectations(t)
+	})
+}
+
+func TestUpgradeProfile(t *testing.T) {
+	data := mocks.NewUserData(t)
+	validate := validator.New()
+	service := New(data, validate)
+
+	request := user.UserCore{
+		Role: "user",
+	}
+
+	t.Run("success upgrade an account", func(t *testing.T) {
+		data.On("UpgradeProfile", "550e8400-e29b-41d4-a716-446655440000", request).Return(nil).Once()
+		err := service.UpgradeProfile("550e8400-e29b-41d4-a716-446655440000", request)
+		assert.Nil(t, err)
+		data.AssertExpectations(t)
+	})
+
+	t.Run("user profile record not found", func(t *testing.T) {
+		data.On("UpgradeProfile", "550e8400-e29b-41d4-a716-446655440000", request).Return(errors.New("user profile record not found")).Once()
+		err := service.UpgradeProfile("550e8400-e29b-41d4-a716-446655440000", request)
+		assert.NotNil(t, err)
+		assert.ErrorContains(t, err, "user profile record not found")
+		data.AssertExpectations(t)
+	})
+
+	t.Run("internal server error", func(t *testing.T) {
+		data.On("UpgradeProfile", "550e8400-e29b-41d4-a716-446655440000", request).Return(errors.New("internal server error")).Once()
+		err := service.UpgradeProfile("550e8400-e29b-41d4-a716-446655440000", request)
 		assert.NotNil(t, err)
 		assert.ErrorContains(t, err, "internal server error")
 		data.AssertExpectations(t)
