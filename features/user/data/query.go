@@ -90,7 +90,7 @@ func (uq *userQuery) Login(request user.UserCore) (user.UserCore, string, error)
 // ProfileUser implements user.UserData
 func (uq *userQuery) ProfileUser(userId string) (user.UserCore, error) {
 	users := User{}
-	query := uq.db.Raw("SELECT * FROM users WHERE user_id = ? AND deleted_at IS NULL", userId).Scan(&users)
+	query := uq.db.First(&users, "user_id = ?", userId)
 	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
 		log.Error("user profile record not found")
 		return user.UserCore{}, errors.New("user profile record not found")
@@ -115,6 +115,29 @@ func (uq *userQuery) UpdateProfile(userId string, request user.UserCore) error {
 
 	if query.Error != nil {
 		log.Error("error while updating user")
+		return errors.New("duplicate data entry")
+	}
+
+	return nil
+}
+
+// DeactiveUser implements user.UserData
+func (uq *userQuery) DeactiveUser(userId string) error {
+	req := User{}
+	query := uq.db.Table("users").Where("user_id = ?", userId).Delete(&req)
+
+	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
+		log.Error("user profile record not found")
+		return errors.New("user profile record not found")
+	}
+
+	if query.RowsAffected == 0 {
+		log.Warn("no user has been created")
+		return errors.New("row affected : 0")
+	}
+
+	if query.Error != nil {
+		log.Error("error while deactivate user")
 		return errors.New("duplicate data entry")
 	}
 
