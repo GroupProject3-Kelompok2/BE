@@ -26,6 +26,34 @@ func (_m *HomestayServiceInterface) Create(input homestay.HomestayCore) error {
 	return r0
 }
 
+// DeleteById provides a mock function with given fields: userId, homestayId
+func (_m *HomestayServiceInterface) DeleteById(userId string, homestayId string) error {
+	ret := _m.Called(userId, homestayId)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(userId, homestayId)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpdateById provides a mock function with given fields: userId, homestayId, input
+func (_m *HomestayServiceInterface) UpdateById(userId string, homestayId string, input homestay.HomestayCore) error {
+	ret := _m.Called(userId, homestayId, input)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string, homestay.HomestayCore) error); ok {
+		r0 = rf(userId, homestayId, input)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 type mockConstructorTestingTNewHomestayServiceInterface interface {
 	mock.TestingT
 	Cleanup(func())

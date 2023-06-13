@@ -12,6 +12,20 @@ type HomestayDataInterface struct {
 	mock.Mock
 }
 
+// DeleteById provides a mock function with given fields: userId, homestayId
+func (_m *HomestayDataInterface) DeleteById(userId string, homestayId string) error {
+	ret := _m.Called(userId, homestayId)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(userId, homestayId)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Insert provides a mock function with given fields: input
 func (_m *HomestayDataInterface) Insert(input homestay.HomestayCore) error {
 	ret := _m.Called(input)
@@ -19,6 +33,20 @@ func (_m *HomestayDataInterface) Insert(input homestay.HomestayCore) error {
 	var r0 error
 	if rf, ok := ret.Get(0).(func(homestay.HomestayCore) error); ok {
 		r0 = rf(input)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpdateById provides a mock function with given fields: userId, homestayId, input
+func (_m *HomestayDataInterface) UpdateById(userId string, homestayId string, input homestay.HomestayCore) error {
+	ret := _m.Called(userId, homestayId, input)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string, homestay.HomestayCore) error); ok {
+		r0 = rf(userId, homestayId, input)
 	} else {
 		r0 = ret.Error(0)
 	}

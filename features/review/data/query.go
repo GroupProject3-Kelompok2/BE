@@ -45,3 +45,25 @@ func (rq *reviewQuery) AddReview(userId string, request review.ReviewCore) error
 
 	return nil
 }
+
+// EditReview implements review.ReviewData
+func (rq *reviewQuery) EditReview(userId string, reviewId string, request review.ReviewCore) error {
+	req := reviewEntities(request)
+	query := rq.db.Table("reviews").Where("review_id = ? AND user_id = ?", reviewId, userId).Updates(&req)
+	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
+		log.Error("review record not found")
+		return errors.New("feedback record not found")
+	}
+
+	if query.RowsAffected == 0 {
+		log.Warn("no review has been created")
+		return errors.New("row affected : 0")
+	}
+
+	if query.Error != nil {
+		log.Error("error while updating review")
+		return errors.New("duplicate data entry")
+	}
+
+	return nil
+}

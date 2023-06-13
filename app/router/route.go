@@ -60,4 +60,5 @@ func initReviewRouter(db *gorm.DB, e *echo.Echo) {
 	reviewHandler := rh.New(reviewService)
 
 	e.POST("/reviews", reviewHandler.AddReview(), middlewares.JWTMiddleware())
+	e.PUT("/reviews/:id", reviewHandler.EditReview(), middlewares.JWTMiddleware())
 }

@@ -44,12 +44,15 @@ type HomestayCore struct {
 
 type ReviewHandler interface {
 	AddReview() echo.HandlerFunc
+	EditReview() echo.HandlerFunc
 }
 
 type ReviewService interface {
 	AddReview(userId string, request ReviewCore) error
+	EditReview(userId string, reviewId string, request ReviewCore) error
 }
 
 type ReviewData interface {
 	AddReview(userId string, request ReviewCore) error
+	EditReview(userId string, reviewId string, request ReviewCore) error
 }

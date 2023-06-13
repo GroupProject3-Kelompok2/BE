@@ -45,3 +45,20 @@ func (rs *reviewService) AddReview(userId string, request review.ReviewCore) err
 
 	return nil
 }
+
+// EditReview implements review.ReviewService
+func (rs *reviewService) EditReview(userId string, reviewId string, request review.ReviewCore) error {
+	err := rs.query.EditReview(userId, reviewId, request)
+	if err != nil {
+		switch {
+		case strings.Contains(err.Error(), "not found"):
+			log.Error("review record not found")
+			return errors.New("review record not found")
+		default:
+			log.Error("internal server error")
+			return errors.New("internal server error")
+		}
+	}
+
+	return nil
+}
