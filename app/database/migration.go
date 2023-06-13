@@ -2,7 +2,6 @@ package database
 
 import (
 	homestay "github.com/GroupProject3-Kelompok2/BE/features/homestay/data"
-	homestay_picture "github.com/GroupProject3-Kelompok2/BE/features/homestay_picture/data"
 	payment "github.com/GroupProject3-Kelompok2/BE/features/payment/data"
 	reservation "github.com/GroupProject3-Kelompok2/BE/features/reservation/data"
 	review "github.com/GroupProject3-Kelompok2/BE/features/review/data"
@@ -14,7 +13,6 @@ func InitMigration(db *gorm.DB) error {
 	err := db.AutoMigrate(
 		&user.User{},
 		&homestay.Homestay{},
-		&homestay_picture.HomestayPicture{},
 		&reservation.Reservation{},
 		&payment.Payment{},
 		&review.Review{},
