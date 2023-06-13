@@ -12,6 +12,20 @@ type UserData struct {
 	mock.Mock
 }
 
+// DeactiveUser provides a mock function with given fields: userId
+func (_m *UserData) DeactiveUser(userId string) error {
+	ret := _m.Called(userId)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(userId)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Login provides a mock function with given fields: request
 func (_m *UserData) Login(request user.UserCore) (user.UserCore, string, error) {
 	ret := _m.Called(request)
