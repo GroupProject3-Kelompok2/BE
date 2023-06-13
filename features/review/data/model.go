@@ -48,18 +48,6 @@ type Homestay struct {
 	Reviews     []Review       `gorm:"foreignKey:HomestayID"`
 }
 
-// Review-model to review-core
-func reviewModels(r Review) review.ReviewCore {
-	return review.ReviewCore{
-		ReviewID:   r.ReviewID,
-		HomestayID: r.HomestayID,
-		Review:     r.Review,
-		Rating:     r.Rating,
-		CreatedAt:  r.CreatedAt,
-		UpdatedAt:  r.UpdatedAt,
-	}
-}
-
 // Review-core to review-model
 func reviewEntities(r review.ReviewCore) Review {
 	return Review{

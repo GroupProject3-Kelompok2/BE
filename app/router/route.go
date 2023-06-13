@@ -53,7 +53,7 @@ func initHomestayRouter(db *gorm.DB, e *echo.Echo) {
 	e.GET("/homestays/:homestay_id", homestayHandler.GetHomestayById(), middlewares.JWTMiddleware())
 	e.PUT("/homestays/:homestay_id", homestayHandler.UpdateHomestayById(), middlewares.JWTMiddleware())
 	e.DELETE("/homestays/:homestay_id", homestayHandler.DeleteHomestayById(), middlewares.JWTMiddleware())
-
+	e.POST("/homestays/:id/pictures", homestayHandler.HomestayPictures(), middlewares.JWTMiddleware())
 }
 
 func initReviewRouter(db *gorm.DB, e *echo.Echo) {

@@ -1,6 +1,8 @@
 package handler
 
-import "github.com/GroupProject3-Kelompok2/BE/features/homestay"
+import (
+	"github.com/GroupProject3-Kelompok2/BE/features/homestay"
+)
 
 type HomestayRequest struct {
 	Name        string  `json:"name" form:"name"`
@@ -17,5 +19,15 @@ func HomestayRequestCore(homestayRequest HomestayRequest) homestay.HomestayCore 
 		Address:     homestayRequest.Address,
 		Price:       homestayRequest.Price,
 		Status:      homestayRequest.Status,
+	}
+}
+
+type HomestayPicturesRequest struct {
+	HomestayPicture *string `json:"homestay_picture" form:"homestay_picture"`
+}
+
+func HomestayPictureRequestToCore(hp *HomestayPicturesRequest) homestay.HomestayPictureCore {
+	return homestay.HomestayPictureCore{
+		URL: *hp.HomestayPicture,
 	}
 }
