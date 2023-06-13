@@ -172,6 +172,14 @@ paths:
           $ref: '#/components/responses/Response500'
       security:
         - bearerAuth : []
+  
+  '/users/hoster':
+    post:
+      tags:
+        - User
+      summary: Upgrade user role to hoster
+      security:
+        - bearerAuth : []
 
   '/users/reservations':
     get:
@@ -227,6 +235,8 @@ paths:
       responses:
         '405':
           description: Invalid input
+      security:
+        - bearerAuth : []
     get:
       tags:
         - Homestay
@@ -235,6 +245,8 @@ paths:
       responses:
         '405':
           description: Invalid input
+      security:
+        - bearerAuth : []
 
   '/homestays/{homestay_id}':
     get:
@@ -263,6 +275,8 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Pet not found
+      security:
+        - bearerAuth : []
     put:
       tags:
         - Homestay
@@ -282,6 +296,8 @@ paths:
           description: Pet not found
         '405':
           description: Validation exception
+      security:
+        - bearerAuth : []
 
     delete:
       tags:
@@ -300,21 +316,29 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Pet not found
+      security:
+        - bearerAuth : []
   
   /homestays/{homestay_id}/pictures:
     post:
       tags:
         - Homestay
       summary: Add specific homestay picture
+      security:
+        - bearerAuth : []
   /homestays/pictures/{pictures_id}:
     put:
       tags:
         - Homestay
       summary: Edit specific picture of specific homestay
+      security:
+        - bearerAuth : []
     delete:
       tags:
         - Homestay
       summary: Delete specific picture of specific homestay
+      security:
+        - bearerAuth : []
 
   /reservations:
     post:
@@ -346,6 +370,8 @@ paths:
       tags:
         - Reservation
       summary: Get specific reservation with payment data
+      security:
+        - bearerAuth : []
     put:
       tags:
         - Reservation
@@ -405,10 +431,14 @@ paths:
       tags:
         - Reservation
       summary: Create payment for specific reservation
+      security:
+        - bearerAuth : []
     put: 
       tags:
         - Reservation
       summary: Update payment of specific reservation  
+      security:
+        - bearerAuth : []
 
   /reviews:
     post:
