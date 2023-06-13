@@ -1,9 +1,15 @@
 package service
 
 import (
+	"errors"
+	"strings"
+
 	"github.com/GroupProject3-Kelompok2/BE/features/homestay"
-	"github.com/go-playground/validator"
+	"github.com/GroupProject3-Kelompok2/BE/utils/middlewares"
+	"github.com/go-playground/validator/v10"
 )
+
+var log = middlewares.Log()
 
 type homestayService struct {
 	homestayData homestay.HomestayDataInterface
@@ -63,4 +69,20 @@ func (service *homestayService) GetById(homestayId string) (homestay.HomestayCor
 		return homestay.HomestayCore{}, err
 	}
 	return data, err
+}
+
+// HomestayPictures implements homestay.HomestayServiceInterface
+func (hs *homestayService) HomestayPictures(homestayId string, req homestay.HomestayPictureCore) error {
+	err := hs.homestayData.HomestayPictures(homestayId, req)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			log.Error("homestay profile record not found")
+			return errors.New("homestay profile record not found")
+		} else {
+			log.Error("internal server error")
+			return errors.New("internal server error")
+		}
+	}
+
+	return nil
 }

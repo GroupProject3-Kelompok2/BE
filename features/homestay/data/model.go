@@ -11,27 +11,28 @@ import (
 )
 
 type Homestay struct {
-	HomestayID   string                    `gorm:"primaryKey;type:varchar(21)"`
-	UserID       string                    `gorm:"type:varchar(21)"`
-	Name         string                    `gorm:"type:text"`
-	Description  string                    `gorm:"type:text"`
-	Address      string                    `gorm:"type:text"`
-	Price        float64                   `gorm:"type:decimal(15,2)"`
-	Status       bool                      `gorm:"type:boolean;default:true"`
-	CreatedAt    time.Time                 `gorm:"type:datetime"`
-	UpdatedAt    time.Time                 `gorm:"type:datetime"`
-	DeletedAt    gorm.DeletedAt            `gorm:"index"`
-	Pictures     []HomestayPicture         `gorm:"foreignKey:HomestayID"`
-	Reservations []reservation.Reservation `gorm:"foreignKey:HomestayID"`
-	Reviews      []review.Review           `gorm:"foreignKey:HomestayID"`
+	HomestayID       string                    `gorm:"primaryKey;type:varchar(21)"`
+	UserID           string                    `gorm:"type:varchar(21)"`
+	Name             string                    `gorm:"type:text"`
+	Description      string                    `gorm:"type:text"`
+	Address          string                    `gorm:"type:text"`
+	Price            float64                   `gorm:"type:decimal(15,2)"`
+	Status           bool                      `gorm:"type:boolean;default:true"`
+	CreatedAt        time.Time                 `gorm:"type:datetime"`
+	UpdatedAt        time.Time                 `gorm:"type:datetime"`
+	DeletedAt        gorm.DeletedAt            `gorm:"index"`
+	HomestayPictures []HomestayPicture         `gorm:"foreignKey:HomestayID"`
+	Reservations     []reservation.Reservation `gorm:"foreignKey:HomestayID"`
+	Reviews          []review.Review           `gorm:"foreignKey:HomestayID"`
 }
 
 type HomestayPicture struct {
-	PictureID  string `gorm:"primaryKey;type:varchar(21)"`
-	HomestayID string `gorm:"type:varchar(21)"`
-	URL        string `gorm:"type:text"`
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	HomestayPictureID  string `gorm:"primaryKey;type:varchar(21)"`
+	HomestayID         string `gorm:"type:varchar(21)"`
+	HomestayPictureURL string `gorm:"type:text"`
+	Homestay           Homestay
+	CreatedAt          time.Time
+	UpdatedAt          time.Time
 }
 
 func HomestayCore(homestayData Homestay) homestay.HomestayCore {
@@ -50,9 +51,9 @@ func HomestayCore(homestayData Homestay) homestay.HomestayCore {
 
 func HomestayPictureCore(pictureData HomestayPicture) homestay.HomestayPictureCore {
 	return homestay.HomestayPictureCore{
-		PictureID:  pictureData.PictureID,
+		PictureID:  pictureData.HomestayPictureID,
 		HomestayID: pictureData.HomestayID,
-		URL:        pictureData.URL,
+		URL:        pictureData.HomestayPictureURL,
 		CreatedAt:  pictureData.CreatedAt,
 		UpdatedAt:  pictureData.UpdatedAt,
 	}
@@ -69,5 +70,16 @@ func HomestayModel(dataCore homestay.HomestayCore) Homestay {
 		Status:      dataCore.Status,
 		CreatedAt:   dataCore.CreatedAt,
 		UpdatedAt:   dataCore.UpdatedAt,
+	}
+}
+
+// homestayPicture-core to homestayPicture-model
+func homestayPictureEntities(pictureData homestay.HomestayPictureCore) HomestayPicture {
+	return HomestayPicture{
+		HomestayPictureID:  pictureData.PictureID,
+		HomestayID:         pictureData.HomestayID,
+		HomestayPictureURL: pictureData.URL,
+		CreatedAt:          pictureData.CreatedAt,
+		UpdatedAt:          pictureData.UpdatedAt,
 	}
 }

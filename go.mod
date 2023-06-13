@@ -3,7 +3,6 @@ module github.com/GroupProject3-Kelompok2/BE
 go 1.20
 
 require (
-	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/google/uuid v1.3.0
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.4
@@ -55,7 +54,6 @@ require (
 	google.golang.org/grpc v1.55.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
-	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 )
 
 require (

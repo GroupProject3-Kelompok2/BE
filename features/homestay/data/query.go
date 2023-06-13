@@ -4,8 +4,13 @@ import (
 	"errors"
 
 	"github.com/GroupProject3-Kelompok2/BE/features/homestay"
+	"github.com/GroupProject3-Kelompok2/BE/utils/middlewares"
+	gonanoid "github.com/matoous/go-nanoid/v2"
+
 	"gorm.io/gorm"
 )
+
+var log = middlewares.Log()
 
 type homestayQuery struct {
 	db *gorm.DB
@@ -98,4 +103,31 @@ func (repo *homestayQuery) SelectById(homestayId string) (homestay.HomestayCore,
 
 	homestayCore := HomestayCore(homestayGorm)
 	return homestayCore, nil
+}
+
+// UpdateHomestayPictures implements homestay.HomestayDataInterface
+func (hq *homestayQuery) HomestayPictures(homestayId string, req homestay.HomestayPictureCore) error {
+	pictureId, err := gonanoid.New()
+	if err != nil {
+		log.Warn("error while creating nano_id for user_id")
+		return nil
+	}
+
+	req.PictureID = pictureId
+	req.HomestayID = homestayId
+	pic := homestayPictureEntities(req)
+	query := hq.db.Table("homestay_pictures").Create(&pic)
+	if query.Error != nil {
+		log.Error("error inserting data, duplicated")
+		return errors.New("error inserting data, duplicated")
+	}
+
+	rowAffected := query.RowsAffected
+	if rowAffected == 0 {
+		log.Warn("no picture has been created")
+		return errors.New("row affected: 0")
+	}
+
+	log.Sugar().Infof("new homestay_picture has been created: %s", req.PictureID)
+	return nil
 }

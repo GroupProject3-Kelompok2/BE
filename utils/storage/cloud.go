@@ -2,7 +2,7 @@ package storages
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"io"
 	"log"
 	"mime/multipart"
@@ -58,21 +58,21 @@ func UploadImage(c echo.Context, file *multipart.FileHeader) (string, error) {
 	return imageURL, nil
 }
 
+// UploadFile uploads an object
 func (c *ClientUploader) UploadFile(file multipart.File, object string) (string, error) {
-	if !strings.Contains(strings.ToLower(object), ".jpeg") && !strings.Contains(strings.ToLower(object), ".jpg") && !strings.Contains(strings.ToLower(object), ".png") {
-		return "", errors.New("file type not allowed")
-	}
-
 	rand := uuid.New().String()
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx := context.Background()
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*50)
 	defer cancel()
+
+	// Upload an object with storage.Writer.
 	wc := c.cl.Bucket(c.bucketName).Object(c.uploadPath + object + rand).NewWriter(ctx)
 	if _, err := io.Copy(wc, file); err != nil {
-		return "", err
+		return "", fmt.Errorf("io.Copy: %v", err)
 	}
-
 	if err := wc.Close(); err != nil {
-		return "", err
+		return "", fmt.Errorf("Writer.Close: %v", err)
 	}
 
 	escapedObject := strings.ReplaceAll(object, " ", "%20")

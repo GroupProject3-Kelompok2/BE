@@ -26,6 +26,20 @@ func (_m *HomestayDataInterface) DeleteById(userId string, homestayId string) er
 	return r0
 }
 
+// HomestayPictures provides a mock function with given fields: homestayId, req
+func (_m *HomestayDataInterface) HomestayPictures(homestayId string, req homestay.HomestayPictureCore) error {
+	ret := _m.Called(homestayId, req)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, homestay.HomestayPictureCore) error); ok {
+		r0 = rf(homestayId, req)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Insert provides a mock function with given fields: input
 func (_m *HomestayDataInterface) Insert(input homestay.HomestayCore) error {
 	ret := _m.Called(input)

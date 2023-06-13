@@ -90,6 +90,20 @@ func (_m *HomestayServiceInterface) GetById(homestayID string) (homestay.Homesta
 	return r0, r1
 }
 
+// HomestayPictures provides a mock function with given fields: homestayId, req
+func (_m *HomestayServiceInterface) HomestayPictures(homestayId string, req homestay.HomestayPictureCore) error {
+	ret := _m.Called(homestayId, req)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, homestay.HomestayPictureCore) error); ok {
+		r0 = rf(homestayId, req)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // UpdateById provides a mock function with given fields: userId, homestayId, input
 func (_m *HomestayServiceInterface) UpdateById(userId string, homestayId string, input homestay.HomestayCore) error {
 	ret := _m.Called(userId, homestayId, input)
