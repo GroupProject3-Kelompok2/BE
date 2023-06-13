@@ -3,6 +3,7 @@ package data
 import (
 	"time"
 
+	"github.com/GroupProject3-Kelompok2/BE/features/review"
 	"gorm.io/gorm"
 )
 
@@ -45,4 +46,29 @@ type Homestay struct {
 	DeletedAt   gorm.DeletedAt `gorm:"index"`
 	User        User           `gorm:"foreignKey:UserID"`
 	Reviews     []Review       `gorm:"foreignKey:HomestayID"`
+}
+
+// Review-model to review-core
+func reviewModels(r Review) review.ReviewCore {
+	return review.ReviewCore{
+		ReviewID:   r.ReviewID,
+		HomestayID: r.HomestayID,
+		Review:     r.Review,
+		Rating:     r.Rating,
+		CreatedAt:  r.CreatedAt,
+		UpdatedAt:  r.UpdatedAt,
+	}
+}
+
+// Review-core to review-model
+func reviewEntities(r review.ReviewCore) Review {
+	return Review{
+		ReviewID:   r.ReviewID,
+		UserID:     r.UserID,
+		HomestayID: r.HomestayID,
+		Review:     r.Review,
+		Rating:     r.Rating,
+		CreatedAt:  r.CreatedAt,
+		UpdatedAt:  r.UpdatedAt,
+	}
 }
