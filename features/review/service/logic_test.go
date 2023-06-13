@@ -62,3 +62,41 @@ func TestAddReview(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 }
+
+func TestEditReview(t *testing.T) {
+	data := mocks.NewReviewData(t)
+	validate := validator.New()
+	UserID := "nanoid"
+	ReviewID := "nanoid"
+	request := review.ReviewCore{
+		Review:     "admin@gmail.com",
+		Rating:     5,
+		HomestayID: "nanoid",
+	}
+	service := New(data, validate)
+
+	t.Run("success edit review", func(t *testing.T) {
+		data.On("EditReview", UserID, ReviewID, request).Return(nil).Once()
+		err := service.EditReview(UserID, ReviewID, request)
+		assert.Nil(t, err)
+		data.AssertExpectations(t)
+	})
+
+	t.Run("review record not found", func(t *testing.T) {
+		notFoundErr := errors.New("review record not found")
+		data.On("EditReview", UserID, ReviewID, request).Return(notFoundErr).Once()
+		err := service.EditReview(UserID, ReviewID, request)
+		assert.NotNil(t, err)
+		assert.EqualError(t, err, notFoundErr.Error(), "Expected error message does not match")
+		data.AssertExpectations(t)
+	})
+
+	t.Run("internal server error", func(t *testing.T) {
+		internalErr := errors.New("internal server error")
+		data.On("EditReview", UserID, ReviewID, request).Return(internalErr).Once()
+		err := service.EditReview(UserID, ReviewID, request)
+		assert.NotNil(t, err)
+		assert.EqualError(t, err, internalErr.Error(), "Expected error message does not match")
+		data.AssertExpectations(t)
+	})
+}

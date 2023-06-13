@@ -26,6 +26,20 @@ func (_m *ReviewData) AddReview(userId string, request review.ReviewCore) error 
 	return r0
 }
 
+// EditReview provides a mock function with given fields: userId, reviewId, request
+func (_m *ReviewData) EditReview(userId string, reviewId string, request review.ReviewCore) error {
+	ret := _m.Called(userId, reviewId, request)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string, review.ReviewCore) error); ok {
+		r0 = rf(userId, reviewId, request)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 type mockConstructorTestingTNewReviewData interface {
 	mock.TestingT
 	Cleanup(func())
