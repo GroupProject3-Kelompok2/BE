@@ -1,8 +1,6 @@
 package homestay
 
-import (
-	"time"
-)
+import "time"
 
 type HomestayCore struct {
 	HomestayID  string  `validate:"required"`
@@ -29,10 +27,14 @@ type HomestayDataInterface interface {
 	Insert(input HomestayCore) error
 	UpdateById(userId string, homestayId string, input HomestayCore) error
 	DeleteById(userId string, homestayId string) error
+	SelectAll() ([]HomestayCore, error)
+	SelectById(homestayID string) (HomestayCore, error)
 }
 
 type HomestayServiceInterface interface {
 	Create(input HomestayCore) error
 	UpdateById(userId string, homestayId string, input HomestayCore) error
 	DeleteById(userId string, homestayId string) error
+	GetAll() ([]HomestayCore, error)
+	GetById(homestayID string) (HomestayCore, error)
 }
