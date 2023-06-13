@@ -101,32 +101,8 @@ func (uq *userQuery) ProfileUser(userId string) (user.UserCore, error) {
 
 // UpdateProfile implements user.UserData
 func (uq *userQuery) UpdateProfile(userId string, request user.UserCore) error {
-	if request.Password == "" || request.NewPassword == "" {
-		log.Error("it's not a complete request for updating the password")
-		return errors.New("it's not a complete request for updating the password")
-	}
-
-	userPwd, err := uq.ProfileUser(userId)
-	if err != nil {
-		log.Error(err.Error())
-		return err
-	}
-
-	match := helper.MatchPassword(request.Password, userPwd.Password)
-	if !match {
-		log.Error("old password and current password do not match")
-		return errors.New("old password and current password do not match")
-	}
-
-	hashed, err := helper.HashPassword(request.NewPassword)
-	if err != nil {
-		log.Error("error while hashing password")
-		return errors.New("error while hashing password")
-	}
-
-	request.Password = hashed
 	req := userEntities(request)
-	query := uq.db.Table("users").Where("user_id = ? AND is_deleted = 0", userId).Updates(&req)
+	query := uq.db.Table("users").Where("user_id = ?", userId).Updates(&req)
 	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
 		log.Error("user profile record not found")
 		return errors.New("user profile record not found")
