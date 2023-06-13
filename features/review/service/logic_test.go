@@ -100,3 +100,36 @@ func TestEditReview(t *testing.T) {
 		data.AssertExpectations(t)
 	})
 }
+
+func TestDeleteReview(t *testing.T) {
+	data := mocks.NewReviewData(t)
+	validate := validator.New()
+	UserID := "nanoid"
+	ReviewID := "nanoid"
+	service := New(data, validate)
+
+	t.Run("success delete review", func(t *testing.T) {
+		data.On("DeleteReview", UserID, ReviewID).Return(nil).Once()
+		err := service.DeleteReview(UserID, ReviewID)
+		assert.Nil(t, err)
+		data.AssertExpectations(t)
+	})
+
+	t.Run("review record not found", func(t *testing.T) {
+		notFoundErr := errors.New("review record not found")
+		data.On("DeleteReview", UserID, ReviewID).Return(notFoundErr).Once()
+		err := service.DeleteReview(UserID, ReviewID)
+		assert.NotNil(t, err)
+		assert.EqualError(t, err, notFoundErr.Error(), "Expected error message does not match")
+		data.AssertExpectations(t)
+	})
+
+	t.Run("internal server error", func(t *testing.T) {
+		internalErr := errors.New("internal server error")
+		data.On("DeleteReview", UserID, ReviewID).Return(internalErr).Once()
+		err := service.DeleteReview(UserID, ReviewID)
+		assert.NotNil(t, err)
+		assert.EqualError(t, err, internalErr.Error(), "Expected error message does not match")
+		data.AssertExpectations(t)
+	})
+}

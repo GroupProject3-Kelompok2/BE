@@ -40,6 +40,56 @@ func (_m *HomestayServiceInterface) DeleteById(userId string, homestayId string)
 	return r0
 }
 
+// GetAll provides a mock function with given fields:
+func (_m *HomestayServiceInterface) GetAll() ([]homestay.HomestayCore, error) {
+	ret := _m.Called()
+
+	var r0 []homestay.HomestayCore
+	var r1 error
+	if rf, ok := ret.Get(0).(func() ([]homestay.HomestayCore, error)); ok {
+		return rf()
+	}
+	if rf, ok := ret.Get(0).(func() []homestay.HomestayCore); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]homestay.HomestayCore)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetById provides a mock function with given fields: homestayID
+func (_m *HomestayServiceInterface) GetById(homestayID string) (homestay.HomestayCore, error) {
+	ret := _m.Called(homestayID)
+
+	var r0 homestay.HomestayCore
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (homestay.HomestayCore, error)); ok {
+		return rf(homestayID)
+	}
+	if rf, ok := ret.Get(0).(func(string) homestay.HomestayCore); ok {
+		r0 = rf(homestayID)
+	} else {
+		r0 = ret.Get(0).(homestay.HomestayCore)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(homestayID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // UpdateById provides a mock function with given fields: userId, homestayId, input
 func (_m *HomestayServiceInterface) UpdateById(userId string, homestayId string, input homestay.HomestayCore) error {
 	ret := _m.Called(userId, homestayId, input)

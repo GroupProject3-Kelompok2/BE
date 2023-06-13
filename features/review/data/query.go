@@ -62,7 +62,30 @@ func (rq *reviewQuery) EditReview(userId string, reviewId string, request review
 
 	if query.Error != nil {
 		log.Error("error while updating review")
-		return errors.New("duplicate data entry")
+		return errors.New("error while update review")
+	}
+
+	return nil
+}
+
+// DeleteReview implements review.ReviewData
+func (rq *reviewQuery) DeleteReview(userId string, reviewId string) error {
+	req := Review{}
+	query := rq.db.Table("reviews").Where("user_id = ? AND review_id = ?", userId, reviewId).Delete(&req)
+
+	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
+		log.Error("review record not found")
+		return errors.New("review record not found")
+	}
+
+	if query.RowsAffected == 0 {
+		log.Warn("no review has been created")
+		return errors.New("row affected : 0")
+	}
+
+	if query.Error != nil {
+		log.Error("error while delete review")
+		return errors.New("error while delete review")
 	}
 
 	return nil

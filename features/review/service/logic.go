@@ -62,3 +62,19 @@ func (rs *reviewService) EditReview(userId string, reviewId string, request revi
 
 	return nil
 }
+
+// DeleteReview implements review.ReviewService
+func (rs *reviewService) DeleteReview(userId string, reviewId string) error {
+	err := rs.query.DeleteReview(userId, reviewId)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			log.Error("review record not found")
+			return errors.New("review record not found")
+		} else {
+			log.Error("internal server error")
+			return errors.New("internal server error")
+		}
+	}
+
+	return nil
+}
