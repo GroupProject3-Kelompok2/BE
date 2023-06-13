@@ -22,6 +22,10 @@ type UpdateProfileRequest struct {
 	ProfilePicture *string `json:"profile_picture" form:"profile_picture"`
 }
 
+type UpgradeProfileRequest struct {
+	Role *string `json:"role" form:"role"`
+}
+
 func RequestToCore(data interface{}) user.UserCore {
 	res := user.UserCore{}
 	switch v := data.(type) {
@@ -48,6 +52,10 @@ func RequestToCore(data interface{}) user.UserCore {
 		}
 		if v.ProfilePicture != nil {
 			res.ProfilePicture = *v.ProfilePicture
+		}
+	case *UpgradeProfileRequest:
+		if v.Role != nil {
+			res.Role = *v.Role
 		}
 	default:
 		return user.UserCore{}

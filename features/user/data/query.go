@@ -143,3 +143,27 @@ func (uq *userQuery) DeactiveUser(userId string) error {
 
 	return nil
 }
+
+// UpgradeProfile implements user.UserData
+func (uq *userQuery) UpgradeProfile(userId string, request user.UserCore) error {
+	query := uq.db.Table("users").Where("user_id = ?", userId).Updates(map[string]interface{}{
+		"role": "hoster",
+	})
+
+	if errors.Is(query.Error, gorm.ErrRecordNotFound) {
+		log.Error("user profile record not found")
+		return errors.New("user profile record not found")
+	}
+
+	if query.RowsAffected == 0 {
+		log.Warn("no user has been created")
+		return errors.New("row affected : 0")
+	}
+
+	if query.Error != nil {
+		log.Error("error while deactivate user")
+		return errors.New("duplicate data entry")
+	}
+
+	return nil
+}
