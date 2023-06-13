@@ -31,8 +31,8 @@ func (handler *HomestayHandler) CreateHomestay() echo.HandlerFunc {
 		}
 
 		if userRole != "hoster" {
-			log.Error("unathorized")
-			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Unauthorize", nil, nil))
+			log.Error("forbidden")
+			return c.JSON(http.StatusForbidden, helper.ResponseFormat(http.StatusForbidden, "", "Forbidden", nil, nil))
 		}
 
 		homestayInput := HomestayRequest{}
@@ -71,8 +71,8 @@ func (handler *HomestayHandler) UpdateHomestayById() echo.HandlerFunc {
 		}
 
 		if userRole != "hoster" {
-			log.Error("unathorized")
-			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Unauthorize", nil, nil))
+			log.Error("forbidden")
+			return c.JSON(http.StatusForbidden, helper.ResponseFormat(http.StatusForbidden, "", "Forbidden", nil, nil))
 		}
 
 		paramId := c.Param("homestay_id")
@@ -104,8 +104,8 @@ func (handler *HomestayHandler) DeleteHomestayById() echo.HandlerFunc {
 		}
 
 		if userRole != "hoster" {
-			log.Error("unathorized")
-			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Unauthorize", nil, nil))
+			log.Error("forbidden")
+			return c.JSON(http.StatusForbidden, helper.ResponseFormat(http.StatusForbidden, "", "Forbidden", nil, nil))
 		}
 
 		paramId := c.Param("homestay_id")
@@ -116,5 +116,37 @@ func (handler *HomestayHandler) DeleteHomestayById() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Homestay deleted successfully", nil, nil))
+	}
+}
+
+func (handler *HomestayHandler) GetAllHomestay() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		results, err := handler.homestayService.GetAll()
+		if err != nil {
+			log.Error("resource not found")
+			return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "Resource not found", nil, nil))
+		}
+
+		var homestaysResponse []HomestayResponse
+		for _, value := range results {
+			homestaysResponse = append(homestaysResponse, HomestayCoreResponse(value))
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Homestays read successfully", homestaysResponse, nil))
+	}
+}
+
+func (handler *HomestayHandler) GetHomestayById() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		paramId := c.Param("homestay_id")
+		results, err := handler.homestayService.GetById(paramId)
+		if err != nil {
+			log.Error("resource not found")
+			return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "Resource not found", nil, nil))
+		}
+
+		homestayResponse := HomestayCoreResponse(results)
+
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Homestays read successfully", homestayResponse, nil))
 	}
 }

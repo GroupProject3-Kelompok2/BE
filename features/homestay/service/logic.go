@@ -48,3 +48,19 @@ func (service *homestayService) DeleteById(userId string, homestayId string) err
 
 	return nil
 }
+
+func (service *homestayService) GetAll() ([]homestay.HomestayCore, error) {
+	data, err := service.homestayData.SelectAll()
+	if err != nil {
+		return nil, err
+	}
+	return data, err
+}
+
+func (service *homestayService) GetById(homestayId string) (homestay.HomestayCore, error) {
+	data, err := service.homestayData.SelectById(homestayId)
+	if err != nil {
+		return homestay.HomestayCore{}, err
+	}
+	return data, err
+}

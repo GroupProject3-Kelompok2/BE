@@ -69,3 +69,33 @@ func (repo *homestayQuery) DeleteById(userId string, homestayId string) error {
 
 	return nil
 }
+
+func (repo *homestayQuery) SelectAll() ([]homestay.HomestayCore, error) {
+	var homestaysData []Homestay
+	tx := repo.db.Find(&homestaysData)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	if tx.RowsAffected == 0 {
+		return nil, errors.New("error homestays not found")
+	}
+
+	var homestaysCoreAll []homestay.HomestayCore
+	for _, value := range homestaysData {
+		homestayCore := HomestayCore(value)
+		homestaysCoreAll = append(homestaysCoreAll, homestayCore)
+	}
+	return homestaysCoreAll, nil
+}
+
+func (repo *homestayQuery) SelectById(homestayId string) (homestay.HomestayCore, error) {
+	var homestayGorm Homestay
+	tx := repo.db.Where("homestay_id = ?", homestayId).First(&homestayGorm)
+	if tx.Error != nil {
+		return homestay.HomestayCore{}, errors.New("error homestay not found")
+	}
+
+	homestayCore := HomestayCore(homestayGorm)
+	return homestayCore, nil
+}
