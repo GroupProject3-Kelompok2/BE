@@ -27,8 +27,12 @@ type HomestayPictureCore struct {
 
 type HomestayDataInterface interface {
 	Insert(input HomestayCore) error
+	UpdateById(userId string, homestayId string, input HomestayCore) error
+	DeleteById(userId string, homestayId string) error
 }
 
 type HomestayServiceInterface interface {
 	Create(input HomestayCore) error
+	UpdateById(userId string, homestayId string, input HomestayCore) error
+	DeleteById(userId string, homestayId string) error
 }

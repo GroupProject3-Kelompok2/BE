@@ -57,7 +57,64 @@ func (handler *HomestayHandler) CreateHomestay() echo.HandlerFunc {
 			}
 		}
 
-		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "", "Successfully created an account.", nil, nil))
+		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "", "Homestay created successfully", nil, nil))
 	}
 
+}
+
+func (handler *HomestayHandler) UpdateHomestayById() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userId, userRole, errExtract := middlewares.ExtractToken(c)
+		if errExtract != nil {
+			log.Error("failed to extract token")
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
+		}
+
+		if userRole != "hoster" {
+			log.Error("unathorized")
+			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Unauthorize", nil, nil))
+		}
+
+		paramId := c.Param("homestay_id")
+
+		homestayInput := HomestayRequest{}
+		errBind := c.Bind(&homestayInput)
+		if errBind != nil {
+			log.Error("bad request")
+			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request", nil, nil))
+		}
+
+		homestayCore := HomestayRequestCore(homestayInput)
+		err := handler.homestayService.UpdateById(userId, paramId, homestayCore)
+		if err != nil {
+			log.Error("resource not found")
+			return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "Resource not found", nil, nil))
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Homestay updated successfully", nil, nil))
+	}
+}
+
+func (handler *HomestayHandler) DeleteHomestayById() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userId, userRole, errExtract := middlewares.ExtractToken(c)
+		if errExtract != nil {
+			log.Error("failed to extract token")
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
+		}
+
+		if userRole != "hoster" {
+			log.Error("unathorized")
+			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Unauthorize", nil, nil))
+		}
+
+		paramId := c.Param("homestay_id")
+		err := handler.homestayService.DeleteById(userId, paramId)
+		if err != nil {
+			log.Error("resource not found")
+			return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "Resource not found", nil, nil))
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Homestay deleted successfully", nil, nil))
+	}
 }

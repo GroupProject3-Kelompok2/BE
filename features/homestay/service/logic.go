@@ -30,3 +30,21 @@ func (service *homestayService) Create(input homestay.HomestayCore) error {
 
 	return nil
 }
+
+func (service *homestayService) UpdateById(userId string, homestayId string, input homestay.HomestayCore) error {
+	errUpdate := service.homestayData.UpdateById(userId, homestayId, input)
+	if errUpdate != nil {
+		return errUpdate
+	}
+
+	return nil
+}
+
+func (service *homestayService) DeleteById(userId string, homestayId string) error {
+	errUpdate := service.homestayData.DeleteById(userId, homestayId)
+	if errUpdate != nil {
+		return errUpdate
+	}
+
+	return nil
+}
