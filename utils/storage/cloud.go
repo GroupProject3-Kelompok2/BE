@@ -2,6 +2,7 @@ package storages
 
 import (
 	"context"
+	"errors"
 	"io"
 	"log"
 	"mime/multipart"
@@ -58,6 +59,10 @@ func UploadImage(c echo.Context, file *multipart.FileHeader) (string, error) {
 }
 
 func (c *ClientUploader) UploadFile(file multipart.File, object string) (string, error) {
+	if !strings.Contains(strings.ToLower(object), ".jpeg") && !strings.Contains(strings.ToLower(object), ".jpg") && !strings.Contains(strings.ToLower(object), ".png") {
+		return "", errors.New("file type not allowed")
+	}
+
 	rand := uuid.New().String()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()

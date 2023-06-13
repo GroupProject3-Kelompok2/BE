@@ -7,6 +7,7 @@ import (
 	"github.com/GroupProject3-Kelompok2/BE/features/user"
 	"github.com/GroupProject3-Kelompok2/BE/utils/helper"
 	"github.com/GroupProject3-Kelompok2/BE/utils/middlewares"
+	storages "github.com/GroupProject3-Kelompok2/BE/utils/storage"
 	"github.com/labstack/echo/v4"
 )
 
@@ -131,6 +132,18 @@ func (uh *userHandler) UpdateUser() echo.HandlerFunc {
 			c.Logger().Error("missing or malformed JWT")
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Missing or Malformed JWT.", nil, nil))
 		}
+
+		var imageURL string
+		file, err1 := c.FormFile("profile_picture")
+		if err1 == nil {
+			imageURL, err1 = storages.UploadImage(c, file)
+			if err1 != nil {
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Failed to upload image", nil, nil))
+			}
+			request.ProfilePicture = &imageURL
+		}
+
+		request.ProfilePicture = &imageURL
 
 		err := uh.service.UpdateProfile(userId, RequestToCore(&request))
 		if err != nil {

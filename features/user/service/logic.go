@@ -120,11 +120,6 @@ func (us *userService) ProfileUser(userId string) (user.UserCore, error) {
 
 // UpdateProfile implements user.UserService
 func (us *userService) UpdateProfile(userId string, request user.UserCore) error {
-	if request.Fullname == "" && request.Email == "" && request.Phone == "" && request.ProfilePicture == "" {
-		log.Error("request cannot be empty")
-		return errors.New("request cannot be empty")
-	}
-
 	err := us.query.UpdateProfile(userId, request)
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {

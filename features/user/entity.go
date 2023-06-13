@@ -15,7 +15,6 @@ type UserCore struct {
 	Email          string `validate:"required,email"`
 	Phone          string `validate:"required"`
 	Password       string `validate:"required"`
-	NewPassword    string
 	ProfilePicture string
 	Role           string
 	CreatedAt      time.Time
