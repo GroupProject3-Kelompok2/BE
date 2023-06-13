@@ -240,7 +240,7 @@ paths:
     get:
       tags:
         - Homestay
-      summary: Get list of all homestays with pictures and reviews
+      summary: Get list of all homestays with 1 picture and average rating
       operationId: addPet
       responses:
         '405':
@@ -252,7 +252,7 @@ paths:
     get:
       tags:
         - Homestay
-      summary:  Get specific homestay with pictures, reviews, and booked dates
+      summary:  Get specific homestay with all pictures, reviews, and booked dates
       parameters:
         - name: homestay_id
           in: path
