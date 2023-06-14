@@ -17,7 +17,6 @@ type Homestay struct {
 	Description      string                    `gorm:"type:text"`
 	Address          string                    `gorm:"type:text"`
 	Price            float64                   `gorm:"type:decimal(15,2)"`
-	Status           bool                      `gorm:"type:boolean;default:true"`
 	CreatedAt        time.Time                 `gorm:"type:datetime"`
 	UpdatedAt        time.Time                 `gorm:"type:datetime"`
 	DeletedAt        gorm.DeletedAt            `gorm:"index"`
@@ -43,7 +42,6 @@ func HomestayCore(homestayData Homestay) homestay.HomestayCore {
 		Description: homestayData.Description,
 		Address:     homestayData.Address,
 		Price:       homestayData.Price,
-		Status:      homestayData.Status,
 		CreatedAt:   homestayData.CreatedAt,
 		UpdatedAt:   homestayData.UpdatedAt,
 	}
@@ -67,7 +65,6 @@ func HomestayModel(dataCore homestay.HomestayCore) Homestay {
 		Description: dataCore.Description,
 		Address:     dataCore.Address,
 		Price:       dataCore.Price,
-		Status:      dataCore.Status,
 		CreatedAt:   dataCore.CreatedAt,
 		UpdatedAt:   dataCore.UpdatedAt,
 	}
