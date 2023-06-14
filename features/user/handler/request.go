@@ -45,7 +45,7 @@ func RequestToCore(data interface{}) user.UserCore {
 			res.Email = *v.Email
 		}
 		if v.Phone != nil {
-			res.Password = *v.Phone
+			res.Phone = *v.Phone
 		}
 		if v.Password != nil {
 			res.Password = *v.Password
