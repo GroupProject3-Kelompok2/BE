@@ -133,6 +133,12 @@ func (uh *userHandler) UpdateUser() echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Missing or Malformed JWT.", nil, nil))
 		}
 
+		errBind := c.Bind(&request)
+		if errBind != nil {
+			c.Logger().Error("error on bind request")
+			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request", nil, nil))
+		}
+
 		var imageURL string
 		file, err1 := c.FormFile("profile_picture")
 		if err1 == nil {
