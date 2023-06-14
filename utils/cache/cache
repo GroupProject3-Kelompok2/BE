@@ -1,9 +1,0 @@
-package cache
-
-func NewRedisClient(config *Config) *redis.ClusterClient {
-	return redis.NewClusterClient(&redis.ClusterOptions{
-		Addrs:    []string{"localhost:7000"},
-		Password: config.Redis.Password,
-		DB:       config.Redis.DB,
-	})
-}

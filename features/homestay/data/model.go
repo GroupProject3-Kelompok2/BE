@@ -29,7 +29,6 @@ type HomestayPicture struct {
 	HomestayPictureID  string `gorm:"primaryKey;type:varchar(21)"`
 	HomestayID         string `gorm:"type:varchar(21)"`
 	HomestayPictureURL string `gorm:"type:text"`
-	Homestay           Homestay
 	CreatedAt          time.Time
 	UpdatedAt          time.Time
 }
@@ -79,4 +78,52 @@ func homestayPictureEntities(pictureData homestay.HomestayPictureCore) HomestayP
 		CreatedAt:          pictureData.CreatedAt,
 		UpdatedAt:          pictureData.UpdatedAt,
 	}
+}
+
+// homestay-model to homestay-core
+func modelToCore(h Homestay) homestay.HomestayCore {
+	var pictureURL string
+	if len(h.HomestayPictures) > 0 {
+		pictureURL = h.HomestayPictures[0].HomestayPictureURL
+	}
+
+	var pictures []homestay.HomestayPictureCore
+	if pictureURL != "" {
+		pictures = []homestay.HomestayPictureCore{
+			{
+				URL: pictureURL,
+			},
+		}
+	}
+
+	var reviews []homestay.ReviewCore
+	totalRating := 0
+	for _, r := range h.Reviews {
+		reviewCore := homestay.ReviewCore{
+			Review: r.Review,
+			Rating: uint8(r.Rating),
+		}
+		reviews = append(reviews, reviewCore)
+
+		totalRating += int(r.Rating)
+	}
+
+	var averageRating float32
+	if len(h.Reviews) > 0 {
+		averageRating = float32(totalRating) / float32(len(h.Reviews))
+	}
+
+	response := homestay.HomestayCore{
+		HomestayID:    h.HomestayID,
+		Name:          h.Name,
+		Description:   h.Description,
+		Address:       h.Address,
+		Price:         h.Price,
+		Pictures:      pictures,
+		Reviews:       reviews,
+		TotalReviews:  uint(len(h.Reviews)),
+		AverageRating: averageRating,
+	}
+
+	return response
 }

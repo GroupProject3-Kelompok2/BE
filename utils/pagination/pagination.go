@@ -9,10 +9,10 @@ import (
 type Pagination struct {
 	Limit      int         `json:"limit,omitempty"`
 	Page       int         `json:"page,omitempty"`
-	Sort       string      `json:"sort,omitempty" validate:"sort"`
-	TotalRows  int64       `json:"total_rows"`
-	TotalPages int         `json:"total_pages"`
-	Rows       interface{} `json:"rows"`
+	Sort       string      `json:"sort,omitempty" validate:"sort,omitempty"`
+	TotalRows  int64       `json:"total_rows,omitempty"`
+	TotalPages int         `json:"total_pages,omitempty"`
+	Rows       interface{} `json:"rows,omitempty"`
 }
 
 func (p *Pagination) GetOffset() int {
@@ -35,7 +35,7 @@ func (p *Pagination) GetPage() int {
 
 func (p *Pagination) GetSort() string {
 	if p.Sort == "" {
-		p.Sort = "Id desc"
+		p.Sort = "homestay_id desc"
 	}
 	return p.Sort
 }
