@@ -18,6 +18,5 @@ func HomestayCoreResponse(homestay homestay.HomestayCore) HomestayResponse {
 		Description: homestay.Description,
 		Address:     homestay.Address,
 		Price:       homestay.Price,
-		Status:      homestay.Status,
 	}
 }

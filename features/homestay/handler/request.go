@@ -18,7 +18,6 @@ func HomestayRequestCore(homestayRequest HomestayRequest) homestay.HomestayCore 
 		Description: homestayRequest.Description,
 		Address:     homestayRequest.Address,
 		Price:       homestayRequest.Price,
-		Status:      homestayRequest.Status,
 	}
 }
 
