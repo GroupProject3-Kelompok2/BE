@@ -4,6 +4,9 @@ import (
 	_homestayData "github.com/GroupProject3-Kelompok2/BE/features/homestay/data"
 	_homestayHandler "github.com/GroupProject3-Kelompok2/BE/features/homestay/handler"
 	_homestayService "github.com/GroupProject3-Kelompok2/BE/features/homestay/service"
+	_reservationData "github.com/GroupProject3-Kelompok2/BE/features/reservation/data"
+	_reservationHandler "github.com/GroupProject3-Kelompok2/BE/features/reservation/handler"
+	_reservationService "github.com/GroupProject3-Kelompok2/BE/features/reservation/service"
 	rd "github.com/GroupProject3-Kelompok2/BE/features/review/data"
 	rh "github.com/GroupProject3-Kelompok2/BE/features/review/handler"
 	rs "github.com/GroupProject3-Kelompok2/BE/features/review/service"
@@ -26,6 +29,7 @@ func InitRouter(db *gorm.DB, e *echo.Echo) {
 
 	initUserRouter(db, e)
 	initHomestayRouter(db, e)
+	initReservationRouter(db, e)
 	initReviewRouter(db, e)
 }
 
@@ -54,6 +58,14 @@ func initHomestayRouter(db *gorm.DB, e *echo.Echo) {
 	e.PUT("/homestays/:homestay_id", homestayHandler.UpdateHomestayById(), middlewares.JWTMiddleware())
 	e.DELETE("/homestays/:homestay_id", homestayHandler.DeleteHomestayById(), middlewares.JWTMiddleware())
 	e.POST("/homestays/:id/pictures", homestayHandler.HomestayPictures(), middlewares.JWTMiddleware())
+}
+
+func initReservationRouter(db *gorm.DB, e *echo.Echo) {
+	reservationData := _reservationData.New(db)
+	reservationService := _reservationService.New(reservationData)
+	reservationHandler := _reservationHandler.New(reservationService)
+
+	e.POST("/reservations", reservationHandler.CreateReservation(), middlewares.JWTMiddleware())
 }
 
 func initReviewRouter(db *gorm.DB, e *echo.Echo) {
