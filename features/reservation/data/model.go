@@ -22,6 +22,21 @@ type Reservation struct {
 	Payment       Payment `gorm:"foreignKey:PaymentID"`
 }
 
+type User struct {
+	UserID         string         `gorm:"primaryKey;type:varchar(21)"`
+	Fullname       string         `gorm:"type:varchar(100);not null"`
+	Email          string         `gorm:"type:varchar(100);not null;unique"`
+	Phone          string         `gorm:"type:varchar(15);not null"`
+	Password       string         `gorm:"type:text;not null"`
+	ProfilePicture string         `gorm:"type:text"`
+	Role           string         `gorm:"type:enum('user', 'hoster'); default:'user'"`
+	CreatedAt      time.Time      `gorm:"type:datetime"`
+	UpdatedAt      time.Time      `gorm:"type:datetime"`
+	DeletedAt      gorm.DeletedAt `gorm:"index"`
+	Homestays      []Homestay     `gorm:"foreignKey:UserID"`
+	Reservations   []Reservation  `gorm:"foreignKey:UserID"`
+}
+
 type Homestay struct {
 	HomestayID   string         `gorm:"primaryKey;type:varchar(21)"`
 	UserID       string         `gorm:"type:varchar(21)"`
