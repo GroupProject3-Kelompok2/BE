@@ -4,6 +4,9 @@ import (
 	_homestayData "github.com/GroupProject3-Kelompok2/BE/features/homestay/data"
 	_homestayHandler "github.com/GroupProject3-Kelompok2/BE/features/homestay/handler"
 	_homestayService "github.com/GroupProject3-Kelompok2/BE/features/homestay/service"
+	pd "github.com/GroupProject3-Kelompok2/BE/features/payment/data"
+	ph "github.com/GroupProject3-Kelompok2/BE/features/payment/handler"
+	ps "github.com/GroupProject3-Kelompok2/BE/features/payment/service"
 	rd "github.com/GroupProject3-Kelompok2/BE/features/review/data"
 	rh "github.com/GroupProject3-Kelompok2/BE/features/review/handler"
 	rs "github.com/GroupProject3-Kelompok2/BE/features/review/service"
@@ -27,6 +30,7 @@ func InitRouter(db *gorm.DB, e *echo.Echo) {
 	initUserRouter(db, e)
 	initHomestayRouter(db, e)
 	initReviewRouter(db, e)
+	initPaymentRouter(db, e)
 }
 
 func initUserRouter(db *gorm.DB, e *echo.Echo) {
@@ -65,4 +69,13 @@ func initReviewRouter(db *gorm.DB, e *echo.Echo) {
 	e.POST("/reviews", reviewHandler.AddReview(), middlewares.JWTMiddleware())
 	e.PUT("/reviews/:id", reviewHandler.EditReview(), middlewares.JWTMiddleware())
 	e.DELETE("/reviews/:id", reviewHandler.DeleteReview(), middlewares.JWTMiddleware())
+}
+
+func initPaymentRouter(db *gorm.DB, e *echo.Echo) {
+	paymentData := pd.New(db)
+	validate := validator.New()
+	paymentService := ps.New(paymentData, validate)
+	paymentHandler := ph.New(paymentService)
+
+	e.POST("payments", paymentHandler.Payment(), middlewares.JWTMiddleware())
 }

@@ -19,7 +19,8 @@ type Reservation struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index"`
 	User          User           `gorm:"foreignKey:UserID"`
 	Homestay      Homestay       `gorm:"foreignKey:HomestayID"`
-	Payment       Payment        `gorm:"foreignKey:PaymentID;references:ReservationID"`
+	PaymentID     string
+	Payment       Payment `gorm:"foreignKey:PaymentID"`
 }
 
 type User struct {
@@ -50,12 +51,12 @@ type Homestay struct {
 }
 
 type Payment struct {
-	PaymentID     string `gorm:"primaryKey;type:varchar(21)"`
+	PaymentID     string `gorm:"primaryKey;type:varchar(255)"`
 	ReservationID string `gorm:"type:varchar(21)"`
-	Amount        uint
-	BankAccount   string
-	VANumber      uint
-	Status        string
+	Amount        string
+	BankAccount   string         `gorm:"type:enum('bca', 'bri', 'bni', 'mandiri'); default:'bca'"`
+	VANumber      string         `gorm:"type:varchar(21)"`
+	Status        string         `gorm:"type:varchar(21)"`
 	CreatedAt     time.Time      `gorm:"type:datetime"`
 	UpdatedAt     time.Time      `gorm:"type:datetime"`
 	DeletedAt     gorm.DeletedAt `gorm:"index"`
