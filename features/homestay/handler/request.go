@@ -9,7 +9,7 @@ type HomestayRequest struct {
 	Description string  `json:"description" form:"description"`
 	Address     string  `json:"address" form:"address"`
 	Price       float64 `json:"price" form:"price"`
-	Status      bool    `json:"status" form:"status"`
+	Picture     *string `json:"homestay_picture" form:"homestay_picture"`
 }
 
 func HomestayRequestCore(homestayRequest HomestayRequest) homestay.HomestayCore {
@@ -18,7 +18,6 @@ func HomestayRequestCore(homestayRequest HomestayRequest) homestay.HomestayCore 
 		Description: homestayRequest.Description,
 		Address:     homestayRequest.Address,
 		Price:       homestayRequest.Price,
-		Status:      homestayRequest.Status,
 	}
 }
 

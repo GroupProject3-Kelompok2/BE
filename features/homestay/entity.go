@@ -11,8 +11,7 @@ type HomestayCore struct {
 	Description string  `validate:"required"`
 	Address     string  `validate:"required"`
 	Price       float64 `validate:"required"`
-	Status      bool
-	Pictures    HomestayPictureCore
+	Pictures    []HomestayPictureCore
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }

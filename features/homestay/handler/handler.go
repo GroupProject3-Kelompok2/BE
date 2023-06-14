@@ -58,6 +58,33 @@ func (handler *HomestayHandler) CreateHomestay() echo.HandlerFunc {
 			}
 		}
 
+		if homestayInput.Picture == nil {
+			return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "", "Homestay created successfully", nil, nil))
+		}
+
+		var imageURL string
+		file, errPic := c.FormFile("homestay_picture")
+		if errPic != nil {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Failed to upload image", nil, nil))
+		}
+
+		imageURL, errPic = storages.UploadImage(c, file)
+		if errPic != nil {
+			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Failed to upload image", nil, nil))
+		}
+
+		request := HomestayPicturesRequest{}
+		request.HomestayPicture = &imageURL
+		err = handler.homestayService.HomestayPictures(homestayCore.HomestayID, HomestayPictureRequestToCore(&request))
+		if err != nil {
+			if strings.Contains(err.Error(), "empty") {
+				return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad Request, data cannot be empty while updating", nil, nil))
+			}
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
+			}
+		}
+
 		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "", "Homestay created successfully", nil, nil))
 	}
 
@@ -167,7 +194,7 @@ func (handler *HomestayHandler) HomestayPictures() echo.HandlerFunc {
 		}
 
 		var imageURL string
-		file, err1 := c.FormFile("profile_picture")
+		file, err1 := c.FormFile("homestay_picture")
 		if err1 == nil {
 			imageURL, err1 = storages.UploadImage(c, file)
 			if err1 != nil {
