@@ -33,7 +33,7 @@ func (tc *paymentHandler) Payment() echo.HandlerFunc {
 
 		errBind := c.Bind(&request)
 		if errBind != nil {
-			log.Error("error on bind login input")
+			log.Error("error on bind request")
 			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request"+errBind.Error(), nil, nil))
 		}
 
