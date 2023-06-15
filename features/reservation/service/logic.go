@@ -1,7 +1,7 @@
 package service
 
 import (
-	"time"
+	"fmt"
 
 	"github.com/GroupProject3-Kelompok2/BE/features/reservation"
 	"github.com/GroupProject3-Kelompok2/BE/utils/helper"
@@ -36,10 +36,8 @@ func (service *reservationService) Create(input reservation.ReservationCore) (st
 }
 
 func (service *reservationService) CheckAvailability(input reservation.ReservationCore) (reservation.ReservationCore, error) {
-	chekinDate, _ := time.Parse("2006-01-02", input.CheckinDate)
-	checkoutDate, _ := time.Parse("2006-01-02", input.CheckoutDate)
 
-	input.CheckoutDate = checkoutDate.AddDate(0, 0, -1).Format("2006-01-02")
+	input.CheckoutDate = input.CheckoutDate.AddDate(0, 0, -1)
 	result, err := service.reservationData.CheckAvailability(input)
 	if err != nil {
 		return reservation.ReservationCore{}, err
@@ -54,7 +52,7 @@ func (service *reservationService) CheckAvailability(input reservation.Reservati
 		return reservation.ReservationCore{}, err
 	}
 
-	reservationDuration := checkoutDate.Sub(chekinDate).Hours() / 24
+	reservationDuration := input.CheckoutDate.Sub(input.CheckinDate).Hours() / 24
 	grossAmount := homestay.Price * reservationDuration
 
 	availability := reservation.Availability{
@@ -82,19 +80,17 @@ func (service *reservationService) GetById(reservationID string) (reservation.Re
 		return reservation.ReservationCore{}, err
 	}
 
-	chekinDate, _ := time.Parse("2006-01-02", reservationCore.CheckinDate)
-	checkoutDate, _ := time.Parse("2006-01-02", reservationCore.CheckoutDate)
-	reservationDuration := checkoutDate.Sub(chekinDate).Hours() / 24
+	reservationDuration := reservationCore.CheckoutDate.Sub(reservationCore.CheckinDate).Hours() / 24
 	grossAmount := homestay.Price * reservationDuration
 
-	availability := reservation.Availability{
+	reservationCore.Homestay = homestay
+	reservationCore.Availability = reservation.Availability{
 		Status:              true,
 		ReservationDuration: int(reservationDuration),
 		GrossAmount:         grossAmount,
 	}
 
-	reservationCore.Homestay = homestay
-	reservationCore.Availability = availability
+	fmt.Println(reservationCore.Availability)
 
 	return reservationCore, err
 }

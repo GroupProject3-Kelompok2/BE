@@ -6,10 +6,10 @@ import (
 
 type ReservationCore struct {
 	ReservationID string
-	UserID        string `validate:"required"`
-	HomestayID    string `validate:"required"`
-	CheckinDate   string `validate:"required"`
-	CheckoutDate  string `validate:"required"`
+	UserID        string    `validate:"required"`
+	HomestayID    string    `validate:"required"`
+	CheckinDate   time.Time `validate:"required"`
+	CheckoutDate  time.Time `validate:"required"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	Homestay      Homestay
