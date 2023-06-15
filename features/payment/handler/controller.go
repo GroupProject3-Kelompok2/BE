@@ -54,14 +54,16 @@ func (tc *paymentHandler) Payment() echo.HandlerFunc {
 func (tc *paymentHandler) Notification() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		midtransResponse := midtransCallback{}
-		log.Printf("callback midtrans: %s, bank: %s, reservation ID: %s, transaction ID: %s",
-			midtransResponse.TransactionStatus, midtransResponse.Bank,
-			midtransResponse.OrderID, midtransResponse.TransactionID)
 		errBind := c.Bind(&midtransResponse)
 		if errBind != nil {
 			log.Println("error on binding notification input")
 			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request: "+errBind.Error(), nil, nil))
 		}
+
+		log.Printf("callback midtrans: %s, bank: %s, reservation ID: %s, transaction ID: %s",
+			midtransResponse.TransactionStatus, midtransResponse.Bank,
+			midtransResponse.OrderID, midtransResponse.TransactionID)
+
 		return nil
 	}
 }
