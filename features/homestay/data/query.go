@@ -105,12 +105,23 @@ func (repo *homestayQuery) SelectAll(keyword string, page pagination.Pagination)
 
 func (repo *homestayQuery) SelectById(homestayId string) (homestay.HomestayCore, error) {
 	var homestayGorm Homestay
-	tx := repo.db.Where("homestay_id = ?", homestayId).First(&homestayGorm)
-	if tx.Error != nil {
-		return homestay.HomestayCore{}, errors.New("error homestay not found")
+	tx := repo.db.Table("homestays").
+		Select("homestays.homestay_id, homestays.name, homestays.description, homestays.address, homestays.price").
+		Joins("LEFT JOIN homestay_pictures ON homestays.homestay_id = homestay_pictures.homestay_id").
+		Where("homestays.homestay_id = ?", homestayId).
+		Where("homestays.deleted_at IS NULL").
+		Group("homestays.homestay_id, homestays.name, homestays.description, homestays.address, homestays.price").
+		Order("homestays.created_at ASC").
+		Preload("HomestayPictures").
+		Preload("Reviews").
+		First(&homestayGorm)
+
+	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
+		log.Error("list homestay not found")
+		return homestay.HomestayCore{}, errors.New("homestay not found")
 	}
 
-	homestayCore := HomestayCore(homestayGorm)
+	homestayCore := modelToCore(homestayGorm)
 	return homestayCore, nil
 }
 

@@ -22,6 +22,12 @@ type HomestayResponse struct {
 	TotalReviews    uint              `json:"total_reviews,omitempty"`
 	AverageRating   float32           `json:"average_rating,omitempty"`
 	HomestayPicture []HomestayPicture `json:"homestay_pictures,omitempty"`
+	Reviews         []Review          `json:"reviews,omitempty"`
+}
+
+type Review struct {
+	Review string `json:"review" form:"review"`
+	Rating uint8  `json:"rating" form:"rating"`
 }
 
 type HomestayPicture struct {
@@ -36,6 +42,14 @@ func searchHomestay(h homestay.HomestayCore) HomestayResponse {
 		}
 	}
 
+	reviews := make([]Review, len(h.Reviews))
+	for i, r := range h.Reviews {
+		reviews[i] = Review{
+			Review: r.Review,
+			Rating: r.Rating,
+		}
+	}
+
 	response := HomestayResponse{
 		HomestayID:      h.HomestayID,
 		Name:            h.Name,
@@ -45,6 +59,7 @@ func searchHomestay(h homestay.HomestayCore) HomestayResponse {
 		HomestayPicture: pictures,
 		TotalReviews:    h.TotalReviews,
 		AverageRating:   h.AverageRating,
+		Reviews:         reviews,
 	}
 
 	return response
