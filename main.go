@@ -25,12 +25,6 @@ func main() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 
-	// cron := cron.New()
-	// cron.AddFunc("0 8 * * *", func() {
-	// 	email.SendEmail(db)
-	// })
-	// cron.Start()
-
 	go func() {
 		<-c
 		log.Info("Program closed ...")

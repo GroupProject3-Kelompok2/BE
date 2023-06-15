@@ -6,6 +6,7 @@ import (
 
 	"github.com/GroupProject3-Kelompok2/BE/features/homestay"
 	"github.com/GroupProject3-Kelompok2/BE/utils/middlewares"
+	"github.com/GroupProject3-Kelompok2/BE/utils/pagination"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -55,10 +56,21 @@ func (service *homestayService) DeleteById(userId string, homestayId string) err
 	return nil
 }
 
-func (service *homestayService) GetAll() ([]homestay.HomestayCore, error) {
-	data, err := service.homestayData.SelectAll()
+func (service *homestayService) GetAll(keyword string, page pagination.Pagination) ([]homestay.HomestayCore, error) {
+	if page.Sort != "" {
+		pageSort := strings.Replace(page.Sort, "_", " ", 1)
+		page.Sort = pageSort
+	}
+
+	data, err := service.homestayData.SelectAll(keyword, page)
 	if err != nil {
-		return nil, err
+		if strings.Contains(err.Error(), "not found") {
+			log.Error("homestay profile record not found")
+			return []homestay.HomestayCore{}, errors.New("homestay profile record not found")
+		} else {
+			log.Error("internal server error")
+			return []homestay.HomestayCore{}, errors.New("internal server error")
+		}
 	}
 	return data, err
 }
@@ -76,8 +88,8 @@ func (hs *homestayService) HomestayPictures(homestayId string, req homestay.Home
 	err := hs.homestayData.HomestayPictures(homestayId, req)
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") {
-			log.Error("homestay profile record not found")
-			return errors.New("homestay profile record not found")
+			log.Error("homestay record not found")
+			return errors.New("homestay record not found")
 		} else {
 			log.Error("internal server error")
 			return errors.New("internal server error")

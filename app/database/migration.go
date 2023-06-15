@@ -13,6 +13,7 @@ func InitMigration(db *gorm.DB) error {
 	err := db.AutoMigrate(
 		&user.User{},
 		&homestay.Homestay{},
+		&homestay.HomestayPicture{},
 		&reservation.Reservation{},
 		&payment.Payment{},
 		&review.Review{},

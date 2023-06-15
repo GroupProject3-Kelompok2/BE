@@ -2,11 +2,13 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/GroupProject3-Kelompok2/BE/features/homestay"
 	"github.com/GroupProject3-Kelompok2/BE/utils/helper"
 	"github.com/GroupProject3-Kelompok2/BE/utils/middlewares"
+	"github.com/GroupProject3-Kelompok2/BE/utils/pagination"
 	storages "github.com/GroupProject3-Kelompok2/BE/utils/storage"
 	"github.com/labstack/echo/v4"
 )
@@ -149,18 +151,30 @@ func (handler *HomestayHandler) DeleteHomestayById() echo.HandlerFunc {
 
 func (handler *HomestayHandler) GetAllHomestay() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		results, err := handler.homestayService.GetAll()
+		var page pagination.Pagination
+		limitInt, _ := strconv.Atoi(c.QueryParam("limit"))
+		pageInt, _ := strconv.Atoi(c.QueryParam("page"))
+		page.Limit = limitInt
+		page.Page = pageInt
+		page.Sort = c.QueryParam("sort")
+		keyword := c.QueryParam("keyword")
+		homestays, err := handler.homestayService.GetAll(keyword, page)
 		if err != nil {
 			log.Error("resource not found")
 			return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "Resource not found", nil, nil))
 		}
 
-		var homestaysResponse []HomestayResponse
-		for _, value := range results {
-			homestaysResponse = append(homestaysResponse, HomestayCoreResponse(value))
+		result := make([]HomestayResponse, len(homestays))
+		for i, homestay := range homestays {
+			result[i] = searchHomestay(homestay)
 		}
 
-		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Homestays read successfully", homestaysResponse, nil))
+		pagination := &pagination.Pagination{
+			Limit: page.Limit,
+			Page:  page.Page,
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Homestays read successfully", result, pagination))
 	}
 }
 
@@ -173,9 +187,9 @@ func (handler *HomestayHandler) GetHomestayById() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "Resource not found", nil, nil))
 		}
 
-		homestayResponse := HomestayCoreResponse(results)
+		resp := searchHomestay(results)
 
-		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Homestays read successfully", homestayResponse, nil))
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Homestays read successfully", resp, nil))
 	}
 }
 

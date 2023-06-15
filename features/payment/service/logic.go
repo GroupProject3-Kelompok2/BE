@@ -59,3 +59,21 @@ func (ps *paymentService) Payment(request payment.PaymentCore) (payment.PaymentC
 	log.Sugar().Infof("new user has been created: %s", result.PaymentID)
 	return result, nil
 }
+
+// UpdatePayment implements payment.PaymentService
+func (ps *paymentService) UpdatePayment(request payment.PaymentCore) error {
+	err := ps.query.UpdatePayment(request)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			log.Error("not found, error while retrieving payment")
+			return errors.New("not found, error while retrieving payment")
+		} else if strings.Contains(err.Error(), "no payment record has been updated") {
+			log.Error("no payment record has been updated")
+			return errors.New("no payment record has been updated")
+		} else {
+			log.Error("internal server error")
+			return errors.New("internal server error")
+		}
+	}
+	return nil
+}

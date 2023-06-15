@@ -5,6 +5,7 @@ import (
 
 	"github.com/GroupProject3-Kelompok2/BE/features/homestay"
 	"github.com/GroupProject3-Kelompok2/BE/utils/middlewares"
+	"github.com/GroupProject3-Kelompok2/BE/utils/pagination"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 
 	"gorm.io/gorm"
@@ -75,22 +76,30 @@ func (repo *homestayQuery) DeleteById(userId string, homestayId string) error {
 	return nil
 }
 
-func (repo *homestayQuery) SelectAll() ([]homestay.HomestayCore, error) {
-	var homestaysData []Homestay
-	tx := repo.db.Find(&homestaysData)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	if tx.RowsAffected == 0 {
-		return nil, errors.New("error homestays not found")
+func (repo *homestayQuery) SelectAll(keyword string, page pagination.Pagination) ([]homestay.HomestayCore, error) {
+	homestays := []Homestay{}
+	tx := repo.db.Table("homestays").
+		Select("homestays.homestay_id, homestays.name, homestays.description, homestays.address, homestays.price, MIN(homestay_pictures.homestay_picture_url) as homestay_picture_url").
+		Joins("LEFT JOIN homestay_pictures ON homestays.homestay_id = homestay_pictures.homestay_id").
+		Where("homestays.name LIKE ? OR homestays.address LIKE ? OR homestays.price LIKE ?", "%"+keyword+"%", "%"+keyword+"%", "%"+keyword+"%").
+		Where("homestays.deleted_at IS NULL").
+		Group("homestays.homestay_id, homestays.name, homestays.description, homestays.address, homestays.price").
+		Order("homestays.created_at ASC").
+		Preload("HomestayPictures").
+		Preload("Reviews").
+		Scopes(pagination.Paginate(&homestays, &page, repo.db)).
+		Find(&homestays)
+	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
+		log.Error("list homestay not found")
+		return nil, errors.New("homestay not found")
 	}
 
 	var homestaysCoreAll []homestay.HomestayCore
-	for _, value := range homestaysData {
-		homestayCore := HomestayCore(value)
+	for _, value := range homestays {
+		homestayCore := modelToCore(value)
 		homestaysCoreAll = append(homestaysCoreAll, homestayCore)
 	}
+
 	return homestaysCoreAll, nil
 }
 

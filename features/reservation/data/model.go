@@ -16,8 +16,7 @@ type Reservation struct {
 	CreatedAt     time.Time      `gorm:"type:datetime"`
 	UpdatedAt     time.Time      `gorm:"type:datetime"`
 	DeletedAt     gorm.DeletedAt `gorm:"index"`
-}
-
+  
 func ReservationCore(reservationData Reservation) reservation.ReservationCore {
 	return reservation.ReservationCore{
 		ReservationID: reservationData.ReservationID,

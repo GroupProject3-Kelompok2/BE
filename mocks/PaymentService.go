@@ -36,6 +36,20 @@ func (_m *PaymentService) Payment(request payment.PaymentCore) (payment.PaymentC
 	return r0, r1
 }
 
+// UpdatePayment provides a mock function with given fields: request
+func (_m *PaymentService) UpdatePayment(request payment.PaymentCore) error {
+	ret := _m.Called(request)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(payment.PaymentCore) error); ok {
+		r0 = rf(request)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // NewPaymentService creates a new instance of PaymentService. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewPaymentService(t interface {
