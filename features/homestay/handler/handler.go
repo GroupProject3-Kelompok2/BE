@@ -164,9 +164,9 @@ func (handler *HomestayHandler) GetAllHomestay() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "Resource not found", nil, nil))
 		}
 
-		result := make([]HomestayResponse, len(homestays))
+		result := make([]AllHomestayResponse, len(homestays))
 		for i, homestay := range homestays {
-			result[i] = searchHomestay(homestay)
+			result[i] = listHomestay(homestay)
 		}
 
 		pagination := &pagination.Pagination{
