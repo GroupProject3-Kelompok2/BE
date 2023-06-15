@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/GroupProject3-Kelompok2/BE/features/reservation"
@@ -36,27 +35,26 @@ func (service *reservationService) Create(input reservation.ReservationCore) (st
 	return reservationID, nil
 }
 
-func (service *reservationService) CheckAvailability(input reservation.ReservationCore) (reservation.Availability, reservation.Homestay, error) {
+func (service *reservationService) CheckAvailability(input reservation.ReservationCore) (reservation.ReservationCore, error) {
 	chekinDate, _ := time.Parse("2006-01-02", input.CheckinDate)
 	checkoutDate, _ := time.Parse("2006-01-02", input.CheckoutDate)
-	reservationDuration := checkoutDate.Sub(chekinDate).Hours() / 24
 
-	date := fmt.Sprint(checkoutDate)
-	input.CheckoutDate = date
+	input.CheckoutDate = checkoutDate.AddDate(0, 0, -1).Format("2006-01-02")
 	result, err := service.reservationData.CheckAvailability(input)
 	if err != nil {
-		return reservation.Availability{}, reservation.Homestay{}, err
+		return reservation.ReservationCore{}, err
 	}
 
 	if result != 0 {
-		return reservation.Availability{Status: false}, reservation.Homestay{}, err
+		return reservation.ReservationCore{Availability: reservation.Availability{Status: false}}, err
 	}
 
 	homestay, err := service.reservationData.SelectHomestay(input.HomestayID)
 	if err != nil {
-		return reservation.Availability{}, reservation.Homestay{}, err
+		return reservation.ReservationCore{}, err
 	}
 
+	reservationDuration := checkoutDate.Sub(chekinDate).Hours() / 24
 	grossAmount := homestay.Price * reservationDuration
 
 	availability := reservation.Availability{
@@ -65,18 +63,23 @@ func (service *reservationService) CheckAvailability(input reservation.Reservati
 		GrossAmount:         grossAmount,
 	}
 
-	return availability, homestay, nil
+	reservationCore := reservation.ReservationCore{
+		Homestay:     homestay,
+		Availability: availability,
+	}
+
+	return reservationCore, nil
 }
 
-func (service *reservationService) GetById(reservationID string) (reservation.ReservationCore, reservation.Homestay, reservation.Availability, error) {
+func (service *reservationService) GetById(reservationID string) (reservation.ReservationCore, error) {
 	reservationCore, err := service.reservationData.SelectById(reservationID)
 	if err != nil {
-		return reservation.ReservationCore{}, reservation.Homestay{}, reservation.Availability{}, err
+		return reservation.ReservationCore{}, err
 	}
 
 	homestay, err := service.reservationData.SelectHomestay(reservationCore.HomestayID)
 	if err != nil {
-		return reservation.ReservationCore{}, reservation.Homestay{}, reservation.Availability{}, err
+		return reservation.ReservationCore{}, err
 	}
 
 	chekinDate, _ := time.Parse("2006-01-02", reservationCore.CheckinDate)
@@ -90,5 +93,16 @@ func (service *reservationService) GetById(reservationID string) (reservation.Re
 		GrossAmount:         grossAmount,
 	}
 
-	return reservationCore, homestay, availability, err
+	reservationCore.Homestay = homestay
+	reservationCore.Availability = availability
+
+	return reservationCore, err
+}
+
+func (service *reservationService) GetAllByUserId(userID string) ([]reservation.ReservationCore, error) {
+	data, err := service.reservationData.SelectAllByUserId(userID)
+	if err != nil {
+		return nil, err
+	}
+	return data, err
 }

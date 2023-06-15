@@ -18,6 +18,19 @@ type Reservation struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index"`
 }
 
+type ReservationData struct {
+	ReservationID string
+	HomestayName  string
+	CheckInDate   string
+	CheckOutDate  string
+	HomestayPrice float64
+	Duration      int
+	Amount        float64
+	BankAccount   string
+	VaNumber      string
+	Status        string
+}
+
 func ReservationCore(reservationData Reservation) reservation.ReservationCore {
 	return reservation.ReservationCore{
 		ReservationID: reservationData.ReservationID,
@@ -39,5 +52,26 @@ func ReservationModel(dataCore reservation.ReservationCore) Reservation {
 		CheckOutDate:  dataCore.CheckoutDate,
 		CreatedAt:     dataCore.CreatedAt,
 		UpdatedAt:     dataCore.UpdatedAt,
+	}
+}
+
+func ReservationDataCore(reservationData ReservationData) reservation.ReservationCore {
+	return reservation.ReservationCore{
+		ReservationID: reservationData.ReservationID,
+		CheckinDate:   reservationData.CheckInDate,
+		CheckoutDate:  reservationData.CheckOutDate,
+		Homestay: reservation.Homestay{
+			Name:  reservationData.HomestayName,
+			Price: reservationData.HomestayPrice,
+		},
+		Availability: reservation.Availability{
+			ReservationDuration: reservationData.Duration,
+			GrossAmount:         reservationData.Amount,
+		},
+		Payment: reservation.Payment{
+			BankAccount: reservationData.BankAccount,
+			VaNumber:    reservationData.VaNumber,
+			Status:      reservationData.Status,
+		},
 	}
 }
