@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 	"strings"
 
@@ -11,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// var log = middlewares.Log()
+var log = middlewares.Log()
 
 type paymentHandler struct {
 	service payment.PaymentService
@@ -28,13 +27,13 @@ func (tc *paymentHandler) Payment() echo.HandlerFunc {
 		request := createPaymentRequest{}
 		_, _, err := middlewares.ExtractToken(c)
 		if err != nil {
-			log.Println("missing or malformed JWT")
+			log.Error("missing or malformed JWT")
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Missing or Malformed JWT", nil, nil))
 		}
 
 		errBind := c.Bind(&request)
 		if errBind != nil {
-			log.Println("error on bind login input")
+			log.Error("error on bind login input")
 			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request"+errBind.Error(), nil, nil))
 		}
 
@@ -46,7 +45,7 @@ func (tc *paymentHandler) Payment() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
 		}
 
-		log.Println(payment)
+		log.Sugar().Infoln(payment)
 		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Successful Operation", paymentResp(payment), nil))
 	}
 }
@@ -56,11 +55,11 @@ func (tc *paymentHandler) Notification() echo.HandlerFunc {
 		midtransResponse := midtransCallback{}
 		errBind := c.Bind(&midtransResponse)
 		if errBind != nil {
-			log.Println("error on binding notification input")
+			log.Sugar().Errorf("error on binding notification input", errBind)
 			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request: "+errBind.Error(), nil, nil))
 		}
 
-		log.Printf("callback midtrans: %s, bank: %s, reservation ID: %s, transaction ID: %s",
+		log.Sugar().Infof("callback midtrans: %s, bank: %s, reservation ID: %s, transaction ID: %s",
 			midtransResponse.TransactionStatus, midtransResponse.Bank,
 			midtransResponse.OrderID, midtransResponse.TransactionID)
 
