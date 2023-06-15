@@ -168,3 +168,8 @@ func (us *userService) UpgradeProfile(userId string, request user.UserCore) erro
 
 	return nil
 }
+
+// MyHomestays implements user.UserService
+func (*userService) MyHomestays(userId string) ([]user.UserCore, error) {
+	panic("unimplemented")
+}

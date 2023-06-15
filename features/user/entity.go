@@ -29,6 +29,7 @@ type UserHandler interface {
 	Register() echo.HandlerFunc
 	Login() echo.HandlerFunc
 	ProfileUser() echo.HandlerFunc
+	MyHomestays() echo.HandlerFunc
 	UpdateUser() echo.HandlerFunc
 	UpgradeUser() echo.HandlerFunc
 	DeactiveUser() echo.HandlerFunc
@@ -38,6 +39,7 @@ type UserService interface {
 	Register(request UserCore) (UserCore, error)
 	Login(request UserCore) (UserCore, string, error)
 	ProfileUser(userId string) (UserCore, error)
+	MyHomestays(userId string) ([]UserCore, error)
 	UpdateProfile(userId string, request UserCore) error
 	UpgradeProfile(userId string, request UserCore) error
 	DeactiveUser(userId string) error
@@ -47,6 +49,7 @@ type UserData interface {
 	Register(request UserCore) (UserCore, error)
 	Login(request UserCore) (UserCore, string, error)
 	ProfileUser(userId string) (UserCore, error)
+	MyHomestays(userId string) ([]UserCore, error)
 	UpdateProfile(userId string, request UserCore) error
 	UpgradeProfile(userId string, request UserCore) error
 	DeactiveUser(userId string) error
