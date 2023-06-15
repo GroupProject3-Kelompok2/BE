@@ -75,6 +75,22 @@ func (service *homestayService) GetAll(keyword string, page pagination.Paginatio
 	return data, err
 }
 
+func (service *homestayService) GetAllByUserId(userID string) ([]homestay.HomestayCore, error) {
+	data, err := service.homestayData.SelectAllByUserId(userID)
+
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			log.Error("homestay profile record not found")
+			return []homestay.HomestayCore{}, errors.New("homestay profile record not found")
+		} else {
+			log.Error("internal server error")
+			return []homestay.HomestayCore{}, errors.New("internal server error")
+		}
+	}
+
+	return data, err
+}
+
 func (service *homestayService) GetById(homestayId string) (homestay.HomestayCore, error) {
 	data, err := service.homestayData.SelectById(homestayId)
 	if err != nil {
