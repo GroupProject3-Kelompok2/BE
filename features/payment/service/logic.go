@@ -60,9 +60,17 @@ func (ps *paymentService) Payment(request payment.PaymentCore) (payment.PaymentC
 	return result, nil
 }
 
-// func (ps *paymentService) UpdateStatus(status, orderID string) error {
-// 	if err := ps.query.UpdateStatus(orderID, status); err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
+// UpdatePayment implements payment.PaymentService
+func (ps *paymentService) UpdatePayment(request payment.PaymentCore) error {
+	err := ps.query.UpdatePayment(request)
+	if err != nil {
+		if strings.Contains(err.Error(), "not found") {
+			log.Error("not found, error while retrieving payment")
+			return errors.New("not found, error while retrieving payment")
+		} else {
+			log.Error("internal server error")
+			return errors.New("internal server error")
+		}
+	}
+	return nil
+}
