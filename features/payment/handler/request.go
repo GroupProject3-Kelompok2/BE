@@ -40,13 +40,9 @@ func RequestToCore(data interface{}) payment.PaymentCore {
 		res.BankAccount = v.BankAccount
 		res.Amount = v.Amount
 	case midtransCallback:
+		res.PaymentID = v.TransactionID
 		res.ReservationID = v.OrderID
-		// res.TransactionTime = v.TransactionTime
 		res.Status = v.TransactionStatus
-		// res.TransactionID = v.TransactionID
-		// res.PaymentType = v.PaymentType
-		res.Amount = v.GrossAmount
-		res.BankAccount = v.Bank
 	default:
 		return payment.PaymentCore{}
 	}

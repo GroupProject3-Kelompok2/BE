@@ -24,10 +24,10 @@ type PaymentHandler interface {
 
 type PaymentService interface {
 	Payment(request PaymentCore) (PaymentCore, error)
-	// UpdateStatus(status, orderID string) error
+	UpdatePayment(request PaymentCore) error
 }
 
 type PaymentData interface {
 	Payment(request PaymentCore) (PaymentCore, error)
-	// UpdateStatus(orderID string, status string) error
+	UpdatePayment(request PaymentCore) error
 }

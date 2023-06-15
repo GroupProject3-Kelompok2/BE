@@ -59,10 +59,17 @@ func (tc *paymentHandler) Notification() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request: "+errBind.Error(), nil, nil))
 		}
 
-		log.Sugar().Infof("callback midtrans: %s, bank: %s, reservation ID: %s, transaction ID: %s",
-			midtransResponse.TransactionStatus, midtransResponse.Bank,
-			midtransResponse.OrderID, midtransResponse.TransactionID)
+		log.Sugar().Infof("callback midtrans status: %s, reservation ID: %s, transaction ID: %s",
+			midtransResponse.TransactionStatus, midtransResponse.OrderID, midtransResponse.TransactionID)
 
-		return nil
+		err := tc.service.UpdatePayment(RequestToCore(midtransResponse))
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "The requested resource was not found", nil, nil))
+			}
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Successful updated payment status", nil, nil))
 	}
 }
