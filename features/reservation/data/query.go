@@ -35,8 +35,11 @@ func (repo *reservationQuery) Insert(input reservation.ReservationCore) (string,
 
 func (repo *reservationQuery) CheckAvailability(input reservation.ReservationCore) (int64, error) {
 	reservationInputGorm := ReservationModel(input)
-	tx := repo.db.Raw("SELECT reservation_id from reservations WHERE homestay_id = ? AND check_in_date BETWEEN ? AND ? OR check_out_date BETWEEN ? AND ?",
-		reservationInputGorm.HomestayID, reservationInputGorm.CheckInDate, reservationInputGorm.CheckOutDate, reservationInputGorm.CheckInDate, reservationInputGorm.CheckOutDate).
+	query := "SELECT reservation_id from reservations " +
+		"WHERE homestay_id = ? AND check_in_date BETWEEN ? AND ? OR check_out_date BETWEEN ? AND ?"
+	tx := repo.db.Raw(query, reservationInputGorm.HomestayID,
+		reservationInputGorm.CheckInDate, reservationInputGorm.CheckOutDate,
+		reservationInputGorm.CheckInDate, reservationInputGorm.CheckOutDate).
 		Scan(&reservationInputGorm)
 
 	return tx.RowsAffected, tx.Error
@@ -50,6 +53,7 @@ func (repo *reservationQuery) SelectById(reservationId string) (reservation.Rese
 	}
 
 	reservationCore := ReservationCore(reservationGorm)
+
 	return reservationCore, nil
 }
 
@@ -62,4 +66,31 @@ func (repo *reservationQuery) SelectHomestay(homestayID string) (reservation.Hom
 	}
 
 	return homestayData, nil
+}
+
+func (repo *reservationQuery) SelectAllByUserId(userID string) ([]reservation.ReservationCore, error) {
+	var reservationsData []ReservationData
+	query := ("select r.reservation_id, h.name as homestay_name, r.check_in_date, r.check_out_date, " +
+		"h.price as homestay_price, datediff(check_out_date, check_in_date) as duration, " +
+		"p.amount, p.bank_account, p.va_number, p.status " +
+		"from reservations as r inner join homestays as h on r.homestay_id = h.homestay_id " +
+		"inner join payments as p on r.reservation_id = p.reservation_id " +
+		"where r.user_id = ? order by r.created_at desc")
+	tx := repo.db.Raw(query, userID).
+		Scan(&reservationsData)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	if tx.RowsAffected == 0 {
+		return nil, errors.New("error reservations not found")
+	}
+
+	var reservationCoreAll []reservation.ReservationCore
+	for _, value := range reservationsData {
+		reservationCore := ReservationDataCore(value)
+		reservationCoreAll = append(reservationCoreAll, reservationCore)
+	}
+
+	return reservationCoreAll, nil
 }

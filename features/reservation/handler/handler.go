@@ -69,7 +69,7 @@ func (handler *ReservationHandler) CheckAvailability() echo.HandlerFunc {
 
 		reservationCore := ReservationRequestCore(reservationInput)
 
-		availability, homestay, err := handler.reservationService.CheckAvailability(reservationCore)
+		reservation, err := handler.reservationService.CheckAvailability(reservationCore)
 		if err != nil {
 			if strings.Contains(err.Error(), "validation") {
 				log.Error("bad request")
@@ -80,11 +80,11 @@ func (handler *ReservationHandler) CheckAvailability() echo.HandlerFunc {
 			}
 		}
 
-		if !availability.Status {
+		if !reservation.Availability.Status {
 			return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Not Available", nil, nil))
 		}
 
-		responseData := ReservationResponseData(reservation.ReservationCore{}, homestay, availability)
+		responseData := ReservationResponseData(reservation)
 
 		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Available", responseData, nil))
 	}
@@ -93,14 +93,42 @@ func (handler *ReservationHandler) CheckAvailability() echo.HandlerFunc {
 func (handler *ReservationHandler) GetReservationById() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		paramId := c.Param("reservation_id")
-		reservationCore, homestay, availability, err := handler.reservationService.GetById(paramId)
+		reservationCore, err := handler.reservationService.GetById(paramId)
 		if err != nil {
 			log.Error("resource not found")
 			return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "Resource not found", nil, nil))
 		}
 
-		responseData := ReservationResponseData(reservationCore, homestay, availability)
+		responseData := ReservationResponseData(reservationCore)
 
-		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Homestays read successfully", responseData, nil))
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Reservation read successfully", responseData, nil))
+	}
+}
+
+func (handler *ReservationHandler) GetAllReservationsByUserId() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userId, _, errExtract := middlewares.ExtractToken(c)
+		if errExtract != nil {
+			log.Error("failed to extract token")
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
+		}
+
+		results, err := handler.reservationService.GetAllByUserId(userId)
+		if err != nil {
+			log.Error("resource not found")
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "Resource not found", nil, nil))
+			} else {
+				log.Error("internal server error")
+				return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
+			}
+		}
+
+		var responseData []ReservationResponse
+		for _, value := range results {
+			responseData = append(responseData, ReservationResponseData(value))
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Reservations read successfully", responseData, nil))
 	}
 }

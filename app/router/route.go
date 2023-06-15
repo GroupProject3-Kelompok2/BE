@@ -73,6 +73,7 @@ func initReservationRouter(db *gorm.DB, e *echo.Echo) {
 	e.POST("/reservations", reservationHandler.CreateReservation(), middlewares.JWTMiddleware())
 	e.POST("/reservations/availability", reservationHandler.CheckAvailability(), middlewares.JWTMiddleware())
 	e.GET("/reservations/:reservation_id", reservationHandler.GetReservationById(), middlewares.JWTMiddleware())
+	e.GET("/users/reservations", reservationHandler.GetAllReservationsByUserId(), middlewares.JWTMiddleware())
 }
 
 func initReviewRouter(db *gorm.DB, e *echo.Echo) {
