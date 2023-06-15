@@ -19,12 +19,15 @@ type PaymentCore struct {
 
 type PaymentHandler interface {
 	Payment() echo.HandlerFunc
+	// Notification() echo.HandlerFunc
 }
 
 type PaymentService interface {
 	Payment(request PaymentCore) (PaymentCore, error)
+	// UpdateStatus(status, orderID string) error
 }
 
 type PaymentData interface {
 	Payment(request PaymentCore) (PaymentCore, error)
+	// UpdateStatus(orderID string, status string) error
 }

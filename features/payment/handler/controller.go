@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"strings"
 
@@ -10,7 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var log = middlewares.Log()
+// var log = middlewares.Log()
 
 type paymentHandler struct {
 	service payment.PaymentService
@@ -24,16 +25,16 @@ func New(us payment.PaymentService) payment.PaymentHandler {
 
 func (tc *paymentHandler) Payment() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		request := CreatePaymentRequest{}
+		request := createPaymentRequest{}
 		_, _, err := middlewares.ExtractToken(c)
 		if err != nil {
-			log.Error("missing or malformed JWT")
+			log.Println("missing or malformed JWT")
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Missing or Malformed JWT", nil, nil))
 		}
 
 		errBind := c.Bind(&request)
 		if errBind != nil {
-			log.Error("error on bind login input")
+			log.Println("error on bind login input")
 			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request"+errBind.Error(), nil, nil))
 		}
 
@@ -45,7 +46,21 @@ func (tc *paymentHandler) Payment() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
 		}
 
-		log.Sugar().Infoln(payment)
+		log.Println(payment)
 		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Successful Operation", paymentResp(payment), nil))
+	}
+}
+
+func (tc *paymentHandler) Notification() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		midtransResponse := notificationResponse{}
+		errBind := c.Bind(&midtransResponse)
+		if errBind != nil {
+			log.Println("error on binding notification input")
+			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request: "+errBind.Error(), nil, nil))
+		}
+
+		log.Println(midtransResponse)
+		return nil
 	}
 }

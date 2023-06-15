@@ -59,3 +59,10 @@ func (ps *paymentService) Payment(request payment.PaymentCore) (payment.PaymentC
 	log.Sugar().Infof("new user has been created: %s", result.PaymentID)
 	return result, nil
 }
+
+// func (ps *paymentService) UpdateStatus(status, orderID string) error {
+// 	if err := ps.query.UpdateStatus(orderID, status); err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
