@@ -167,3 +167,26 @@ func (uq *userQuery) UpgradeProfile(userId string, request user.UserCore) error 
 
 	return nil
 }
+
+// MyHomestays implements user.UserData
+func (*userQuery) MyHomestays(userId string) ([]user.UserCore, error) {
+	users := []User{}
+	// query := uq.db.Table("users").
+	// 	Joins()
+	// 	Where("is_deleted = 0").
+	// 	Order("created_at ASC").
+	// 	Preload("Homestays")
+	// 	Find(&users)
+
+	// if errors.Is(query.Error, gorm.ErrRecordNotFound) {
+	// 	log.Sugar().Errorf("list homestays not found.")
+	// 	return nil, errors.New("not found, error while retrieving list homestays")
+	// }
+
+	result := make([]user.UserCore, len(users))
+	for i, user := range users {
+		result[i] = userModels(user)
+	}
+
+	return result, nil
+}

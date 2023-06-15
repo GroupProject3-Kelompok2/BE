@@ -2,11 +2,13 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/GroupProject3-Kelompok2/BE/features/user"
 	"github.com/GroupProject3-Kelompok2/BE/utils/helper"
 	"github.com/GroupProject3-Kelompok2/BE/utils/middlewares"
+	"github.com/GroupProject3-Kelompok2/BE/utils/pagination"
 	storages "github.com/GroupProject3-Kelompok2/BE/utils/storage"
 	"github.com/labstack/echo/v4"
 )
@@ -210,5 +212,35 @@ func (uh *userHandler) UpgradeUser() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusCreated, helper.ResponseFormat(http.StatusCreated, "", "Successfully updated role.", nil, nil))
+	}
+}
+
+// MyHomestays implements user.UserHandler
+func (uh *userHandler) MyHomestays() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var page pagination.Pagination
+		limitInt, _ := strconv.Atoi(c.QueryParam("limit"))
+		pageInt, _ := strconv.Atoi(c.QueryParam("page"))
+		page.Limit = limitInt
+		page.Page = pageInt
+		page.Sort = c.QueryParam("sort")
+		// keyword := c.QueryParam("keyword")
+		// homestays, err := uh.service.MyHomestays(keyword, page)
+		// if err != nil {
+		// 	log.Error("resource not found")
+		// 	return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "Resource not found", nil, nil))
+		// }
+
+		// result := make([]AllHomestayResponse, len(homestays))
+		// for i, homestay := range homestays {
+		// 	result[i] = listHomestay(homestay)
+		// }
+
+		pagination := &pagination.Pagination{
+			Limit: page.Limit,
+			Page:  page.Page,
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Homestays read successfully", nil, pagination))
 	}
 }

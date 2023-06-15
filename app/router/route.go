@@ -49,6 +49,7 @@ func initUserRouter(db *gorm.DB, e *echo.Echo) {
 	e.PUT("/users", userHandler.UpdateUser(), middlewares.JWTMiddleware())
 	e.PUT("/users/role", userHandler.UpgradeUser(), middlewares.JWTMiddleware())
 	e.DELETE("/users", userHandler.DeactiveUser(), middlewares.JWTMiddleware())
+	e.GET("/users/homestay", userHandler.MyHomestays(), middlewares.JWTMiddleware())
 }
 
 func initHomestayRouter(db *gorm.DB, e *echo.Echo) {
