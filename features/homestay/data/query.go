@@ -114,6 +114,34 @@ func (repo *homestayQuery) SelectById(homestayId string) (homestay.HomestayCore,
 	return homestayCore, nil
 }
 
+func (repo *homestayQuery) SelectAllByUserId(userID string) ([]homestay.HomestayCore, error) {
+	homestays := []Homestay{}
+
+	tx := repo.db.Table("homestays").
+		Select("homestays.homestay_id, homestays.name, homestays.description, homestays.address, homestays.price, MIN(homestay_pictures.homestay_picture_url) as homestay_picture_url").
+		Joins("LEFT JOIN homestay_pictures ON homestays.homestay_id = homestay_pictures.homestay_id").
+		Where("homestays.user_id = ?", userID).
+		Where("homestays.deleted_at IS NULL").
+		Group("homestays.homestay_id, homestays.name, homestays.description, homestays.address, homestays.price").
+		Order("homestays.created_at ASC").
+		Preload("HomestayPictures").
+		Preload("Reviews").
+		Find(&homestays)
+
+	if errors.Is(tx.Error, gorm.ErrRecordNotFound) {
+		log.Error("list homestay not found")
+		return nil, errors.New("homestay not found")
+	}
+
+	var homestaysCoreAll []homestay.HomestayCore
+	for _, value := range homestays {
+		homestayCore := modelToCore(value)
+		homestaysCoreAll = append(homestaysCoreAll, homestayCore)
+	}
+
+	return homestaysCoreAll, nil
+}
+
 // UpdateHomestayPictures implements homestay.HomestayDataInterface
 func (hq *homestayQuery) HomestayPictures(homestayId string, req homestay.HomestayPictureCore) error {
 	pictureId, err := gonanoid.New()

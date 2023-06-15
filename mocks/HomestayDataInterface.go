@@ -82,6 +82,31 @@ func (_m *HomestayDataInterface) SelectAll(keyword string, page pagination.Pagin
 	return r0, r1
 }
 
+func (_m *HomestayDataInterface) SelectAllByUserId(userID string) ([]homestay.HomestayCore, error) {
+	ret := _m.Called(userID)
+
+	var r0 []homestay.HomestayCore
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) ([]homestay.HomestayCore, error)); ok {
+		return rf(userID)
+	}
+	if rf, ok := ret.Get(0).(func(string) []homestay.HomestayCore); ok {
+		r0 = rf(userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]homestay.HomestayCore)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // SelectById provides a mock function with given fields: homestayID
 func (_m *HomestayDataInterface) SelectById(homestayID string) (homestay.HomestayCore, error) {
 	ret := _m.Called(homestayID)

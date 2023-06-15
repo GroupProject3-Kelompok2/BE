@@ -64,6 +64,7 @@ type HomestayDataInterface interface {
 	DeleteById(userId string, homestayId string) error
 	SelectAll(keyword string, page pagination.Pagination) ([]HomestayCore, error)
 	SelectById(homestayID string) (HomestayCore, error)
+	SelectAllByUserId(userID string) ([]HomestayCore, error)
 	HomestayPictures(homestayId string, req HomestayPictureCore) error
 }
 
@@ -73,5 +74,6 @@ type HomestayServiceInterface interface {
 	DeleteById(userId string, homestayId string) error
 	GetAll(keyword string, page pagination.Pagination) ([]HomestayCore, error)
 	GetById(homestayID string) (HomestayCore, error)
+	GetAllByUserId(userID string) ([]HomestayCore, error)
 	HomestayPictures(homestayId string, req HomestayPictureCore) error
 }
