@@ -36,8 +36,6 @@ func (service *reservationService) Create(input reservation.ReservationCore) (st
 }
 
 func (service *reservationService) CheckAvailability(input reservation.ReservationCore) (reservation.ReservationCore, error) {
-	reservationDuration := input.CheckoutDate.Sub(input.CheckinDate).Hours() / 24
-	input.CheckoutDate = input.CheckoutDate.AddDate(0, 0, -1)
 	result, err := service.reservationData.CheckAvailability(input)
 	if err != nil {
 		return reservation.ReservationCore{}, err
@@ -52,6 +50,7 @@ func (service *reservationService) CheckAvailability(input reservation.Reservati
 		return reservation.ReservationCore{}, err
 	}
 
+	reservationDuration := input.CheckoutDate.Sub(input.CheckinDate).Hours() / 24
 	grossAmount := homestay.Price * reservationDuration
 
 	availability := reservation.Availability{
@@ -62,7 +61,7 @@ func (service *reservationService) CheckAvailability(input reservation.Reservati
 
 	reservationCore := reservation.ReservationCore{
 		CheckinDate:  input.CheckinDate,
-		CheckoutDate: input.CheckoutDate.AddDate(0, 0, 1),
+		CheckoutDate: input.CheckoutDate,
 		Homestay:     homestay,
 		Availability: availability,
 	}
