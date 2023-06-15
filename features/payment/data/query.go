@@ -42,27 +42,11 @@ func (pq *paymentQuery) Payment(request payment.PaymentCore) (payment.PaymentCor
 	return paymentModels(paymentData), nil
 }
 
-func (pq *paymentQuery) UpdateStatus(orderID string, status string) error {
-	result := pq.db.Table("payments").Where("reservation_id = ?", orderID).Update("status", status)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		log.Error("payment record not found")
-		return errors.New("payment record not found")
-	}
-	if result.RowsAffected == 0 {
-		log.Warn("no payment record has been updated")
-		return errors.New("no payment record has been updated")
-	}
-	if result.Error != nil {
-		log.Error("error while updating payment status")
-		return errors.New("internal server error")
-	}
-	return nil
-}
-
 // UpdatePayment implements payment.PaymentData
 func (pq *paymentQuery) UpdatePayment(request payment.PaymentCore) error {
 	req := paymentEntities(request)
-	log.Sugar().Infoln(req)
+	log.Sugar().Infof("callback midtrans status: %s, reservation ID: %s, transaction ID: %s",
+		req.Status, req.ReservationID, req.PaymentID)
 	query := pq.db.Table("payments").
 		Where("payment_id = ? AND reservation_id = ?", request.PaymentID, request.ReservationID).
 		Updates(map[string]interface{}{
