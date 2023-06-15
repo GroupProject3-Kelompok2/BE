@@ -54,6 +54,12 @@ func (tc *paymentHandler) Payment() echo.HandlerFunc {
 func (tc *paymentHandler) Notification() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		midtransResponse := midtransCallback{}
+		_, _, err := middlewares.ExtractToken(c)
+		if err != nil {
+			log.Println("missing or malformed JWT")
+			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "", "Missing or Malformed JWT", nil, nil))
+		}
+
 		errBind := c.Bind(&midtransResponse)
 		if errBind != nil {
 			log.Println("error on binding notification input")
