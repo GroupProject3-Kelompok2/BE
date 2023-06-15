@@ -66,6 +66,8 @@ func (tc *paymentHandler) Notification() echo.HandlerFunc {
 		if err != nil {
 			if strings.Contains(err.Error(), "not found") {
 				return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "The requested resource was not found", nil, nil))
+			} else if strings.Contains(err.Error(), "no payment record has been updated") {
+				return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "No payment record has been updated", nil, nil))
 			}
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
 		}
