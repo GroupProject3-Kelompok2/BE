@@ -29,12 +29,12 @@ func paymentResp(p payment.PaymentCore) paymentResponse {
 	}
 }
 
-type notificationResponse struct {
-	StatusCode        string `json:"status_code"`
-	OrderID           string `json:"order_id"`
-	TransactionTime   string `json:"transaction_time"`
-	TransactionStatus string `json:"transaction_status"`
-	FraudStatus       string `json:"fraud_status"`
-	PaymentType       string `json:"payment_type"`
-	GrossAmount       int    `json:"gross_amount"`
-}
+// type notificationResponse struct {
+// 	StatusCode        string `json:"status_code"`
+// 	OrderID           string `json:"order_id"`
+// 	TransactionTime   string `json:"transaction_time"`
+// 	TransactionStatus string `json:"transaction_status"`
+// 	FraudStatus       string `json:"fraud_status"`
+// 	PaymentType       string `json:"payment_type"`
+// 	GrossAmount       int    `json:"gross_amount"`
+// }

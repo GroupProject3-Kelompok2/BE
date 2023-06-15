@@ -19,7 +19,7 @@ type PaymentCore struct {
 
 type PaymentHandler interface {
 	Payment() echo.HandlerFunc
-	// Notification() echo.HandlerFunc
+	Notification() echo.HandlerFunc
 }
 
 type PaymentService interface {

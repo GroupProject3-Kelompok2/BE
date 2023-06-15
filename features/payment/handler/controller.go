@@ -53,14 +53,14 @@ func (tc *paymentHandler) Payment() echo.HandlerFunc {
 
 func (tc *paymentHandler) Notification() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		midtransResponse := notificationResponse{}
+		midtransResponse := midtransCallback{}
 		errBind := c.Bind(&midtransResponse)
 		if errBind != nil {
 			log.Println("error on binding notification input")
 			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request: "+errBind.Error(), nil, nil))
 		}
 
-		log.Println(midtransResponse)
+		log.Printf("callback midtrans: %v", midtransResponse)
 		return nil
 	}
 }
