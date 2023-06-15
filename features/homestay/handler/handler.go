@@ -193,6 +193,29 @@ func (handler *HomestayHandler) GetHomestayById() echo.HandlerFunc {
 	}
 }
 
+func (handler *HomestayHandler) GetAllHomestayByUserId() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		userId, _, errExtract := middlewares.ExtractToken(c)
+		if errExtract != nil {
+			log.Error("failed to extract token")
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "", "Internal server error", nil, nil))
+		}
+
+		homestays, err := handler.homestayService.GetAllByUserId(userId)
+		if err != nil {
+			log.Error("resource not found")
+			return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "Resource not found", nil, nil))
+		}
+
+		result := make([]AllHomestayResponse, len(homestays))
+		for i, homestay := range homestays {
+			result[i] = listHomestay(homestay)
+		}
+
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Homestays read successfully", result, nil))
+	}
+}
+
 func (handler *HomestayHandler) HomestayPictures() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		request := HomestayPicturesRequest{}
