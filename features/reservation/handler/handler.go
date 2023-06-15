@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -99,6 +100,7 @@ func (handler *ReservationHandler) GetReservationById() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, helper.ResponseFormat(http.StatusNotFound, "", "Resource not found", nil, nil))
 		}
 
+		fmt.Println(reservationCore.Availability)
 		responseData := ReservationResponseData(reservationCore)
 
 		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusOK, "", "Reservation read successfully", responseData, nil))

@@ -11,8 +11,8 @@ type Reservation struct {
 	ReservationID string         `gorm:"primaryKey;type:varchar(21)"`
 	UserID        string         `gorm:"primaryKey;type:varchar(21)"`
 	HomestayID    string         `gorm:"primaryKey;type:varchar(21)"`
-	CheckInDate   string         `gorm:"type:date"`
-	CheckOutDate  string         `gorm:"type:date"`
+	CheckInDate   time.Time      `gorm:"type:date"`
+	CheckOutDate  time.Time      `gorm:"type:date"`
 	CreatedAt     time.Time      `gorm:"type:datetime"`
 	UpdatedAt     time.Time      `gorm:"type:datetime"`
 	DeletedAt     gorm.DeletedAt `gorm:"index"`
@@ -21,8 +21,8 @@ type Reservation struct {
 type ReservationData struct {
 	ReservationID string
 	HomestayName  string
-	CheckInDate   string
-	CheckOutDate  string
+	CheckInDate   time.Time
+	CheckOutDate  time.Time
 	HomestayPrice float64
 	Duration      int
 	Amount        float64
