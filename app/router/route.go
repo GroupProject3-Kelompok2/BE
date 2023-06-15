@@ -90,5 +90,5 @@ func initPaymentRouter(db *gorm.DB, e *echo.Echo) {
 	paymentHandler := ph.New(paymentService)
 
 	e.POST("/payments", paymentHandler.Payment(), middlewares.JWTMiddleware())
-	e.POST("/payments/callback", paymentHandler.Notification(), middlewares.JWTMiddleware())
+	e.POST("/payments/callback", paymentHandler.Notification())
 }

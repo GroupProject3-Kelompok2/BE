@@ -66,7 +66,7 @@ func (tc *paymentHandler) Notification() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "", "Bad request: "+errBind.Error(), nil, nil))
 		}
 
-		log.Printf("callback midtrans: %v", midtransResponse)
+		log.Printf("callback midtrans: %s, bank: %s", midtransResponse.TransactionStatus, midtransResponse.Bank)
 		return nil
 	}
 }
