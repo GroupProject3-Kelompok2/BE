@@ -4,18 +4,18 @@ import (
 	_homestayData "github.com/GroupProject3-Kelompok2/BE/features/homestay/data"
 	_homestayHandler "github.com/GroupProject3-Kelompok2/BE/features/homestay/handler"
 	_homestayService "github.com/GroupProject3-Kelompok2/BE/features/homestay/service"
-	pd "github.com/GroupProject3-Kelompok2/BE/features/payment/data"
-	ph "github.com/GroupProject3-Kelompok2/BE/features/payment/handler"
-	ps "github.com/GroupProject3-Kelompok2/BE/features/payment/service"
+	_paymentdata "github.com/GroupProject3-Kelompok2/BE/features/payment/data"
+	_paymenthandler "github.com/GroupProject3-Kelompok2/BE/features/payment/handler"
+	_paymentservice "github.com/GroupProject3-Kelompok2/BE/features/payment/service"
 	_reservationData "github.com/GroupProject3-Kelompok2/BE/features/reservation/data"
 	_reservationHandler "github.com/GroupProject3-Kelompok2/BE/features/reservation/handler"
 	_reservationService "github.com/GroupProject3-Kelompok2/BE/features/reservation/service"
-	rd "github.com/GroupProject3-Kelompok2/BE/features/review/data"
-	rh "github.com/GroupProject3-Kelompok2/BE/features/review/handler"
-	rs "github.com/GroupProject3-Kelompok2/BE/features/review/service"
-	ud "github.com/GroupProject3-Kelompok2/BE/features/user/data"
-	uh "github.com/GroupProject3-Kelompok2/BE/features/user/handler"
-	us "github.com/GroupProject3-Kelompok2/BE/features/user/service"
+	_reviewdata "github.com/GroupProject3-Kelompok2/BE/features/review/data"
+	_reviewhandler "github.com/GroupProject3-Kelompok2/BE/features/review/handler"
+	_reviewservice "github.com/GroupProject3-Kelompok2/BE/features/review/service"
+	_userdata "github.com/GroupProject3-Kelompok2/BE/features/user/data"
+	_userhandler "github.com/GroupProject3-Kelompok2/BE/features/user/handler"
+	_userservice "github.com/GroupProject3-Kelompok2/BE/features/user/service"
 	"github.com/GroupProject3-Kelompok2/BE/utils/middlewares"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -38,10 +38,10 @@ func InitRouter(db *gorm.DB, e *echo.Echo) {
 }
 
 func initUserRouter(db *gorm.DB, e *echo.Echo) {
-	userData := ud.New(db)
+	userData := _userdata.New(db)
 	validate := validator.New()
-	userService := us.New(userData, validate)
-	userHandler := uh.New(userService)
+	userService := _userservice.New(userData, validate)
+	userHandler := _userhandler.New(userService)
 
 	e.POST("/register", userHandler.Register())
 	e.POST("/login", userHandler.Login())
@@ -49,7 +49,6 @@ func initUserRouter(db *gorm.DB, e *echo.Echo) {
 	e.PUT("/users", userHandler.UpdateUser(), middlewares.JWTMiddleware())
 	e.PUT("/users/role", userHandler.UpgradeUser(), middlewares.JWTMiddleware())
 	e.DELETE("/users", userHandler.DeactiveUser(), middlewares.JWTMiddleware())
-	e.GET("/users/homestay", userHandler.MyHomestays(), middlewares.JWTMiddleware())
 }
 
 func initHomestayRouter(db *gorm.DB, e *echo.Echo) {
@@ -78,10 +77,10 @@ func initReservationRouter(db *gorm.DB, e *echo.Echo) {
 }
 
 func initReviewRouter(db *gorm.DB, e *echo.Echo) {
-	reviewData := rd.New(db)
+	reviewData := _reviewdata.New(db)
 	validate := validator.New()
-	reviewService := rs.New(reviewData, validate)
-	reviewHandler := rh.New(reviewService)
+	reviewService := _reviewservice.New(reviewData, validate)
+	reviewHandler := _reviewhandler.New(reviewService)
 
 	e.POST("/reviews", reviewHandler.AddReview(), middlewares.JWTMiddleware())
 	e.PUT("/reviews/:id", reviewHandler.EditReview(), middlewares.JWTMiddleware())
@@ -89,10 +88,10 @@ func initReviewRouter(db *gorm.DB, e *echo.Echo) {
 }
 
 func initPaymentRouter(db *gorm.DB, e *echo.Echo) {
-	paymentData := pd.New(db)
+	paymentData := _paymentdata.New(db)
 	validate := validator.New()
-	paymentService := ps.New(paymentData, validate)
-	paymentHandler := ph.New(paymentService)
+	paymentService := _paymentservice.New(paymentData, validate)
+	paymentHandler := _paymenthandler.New(paymentService)
 
 	e.POST("/payments", paymentHandler.Payment(), middlewares.JWTMiddleware())
 	e.POST("/payments/callback", paymentHandler.Notification())

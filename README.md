@@ -26,10 +26,10 @@ This RESTful API was developed by using Golang and written based on Clean Archit
 ![GitHub](https://img.shields.io/badge/github%20Project-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
 ![Discord](https://img.shields.io/badge/Discord-%237289DA.svg?style=for-the-badge&logo=discord&logoColor=white)
 
-## 🔗 ERD
+### 🔗 ERD
 <img src="ERD-ImmersiveDashboard.png">
 
-## 🔥 Open API
+### 🔥 Open API
 
 Simply [click here](https://app.swaggerhub.com/apis/dimasyudhana/AirBnB-RestfulAPI/1.0.0#) to see the details of endpoints we have agreed with our FE team.
 
@@ -49,7 +49,7 @@ Simply [click here](https://app.swaggerhub.com/apis/dimasyudhana/AirBnB-RestfulA
 </details>
 
 <details>
-  <summary>📑 Classes</summary>
+  <summary>📑 Homestays </summary>
   
 | Method      | Endpoint            | Params      | JWT Token   | Function                                |
 | ----------- | ------------------- | ----------- | ----------- | --------------------------------------- |
@@ -62,7 +62,7 @@ Simply [click here](https://app.swaggerhub.com/apis/dimasyudhana/AirBnB-RestfulA
 </details>
 
 <details>
-  <summary>📠 Mentees</summary>
+  <summary>📠 Reservations </summary>
   
 | Method      | Endpoint            | Params                | JWT Token   | Function                                |
 | ----------- | ------------------- | --------------------- | ----------- | --------------------------------------- |
@@ -76,7 +76,7 @@ Simply [click here](https://app.swaggerhub.com/apis/dimasyudhana/AirBnB-RestfulA
   </details>
 
   <details>
-   <summary>🔊 Feedbacks</summary>
+   <summary>🔊 Payments </summary>
   
 | Method      | Endpoint            | Params      | JWT Token   | Function                                |
 | ----------- | ------------------- | ----------- | ----------- | --------------------------------------- |
@@ -86,7 +86,18 @@ Simply [click here](https://app.swaggerhub.com/apis/dimasyudhana/AirBnB-RestfulA
 
   </details>
 
-# 🛠️ How to Run Locally
+  <details>
+   <summary>🔊 Reviews </summary>
+  
+| Method      | Endpoint            | Params      | JWT Token   | Function                                |
+| ----------- | ------------------- | ----------- | ----------- | --------------------------------------- |
+| POST        | /feedbacks          | -           | YES         | Register feedback for mentees           |
+| PUT         | /feedbacks          | feedback_id | YES         | Update selected feedback for mentees    |
+| DELETE      | /feedbacks          | feedback_id | YES         | Unregister spesif feedback              |
+
+  </details>
+
+### 🛠️ How to Run Locally
 
 - Clone it
 
